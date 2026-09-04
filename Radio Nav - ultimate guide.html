@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radio Navigation — ATPL Study Poster</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00d4ff;
+    --amber: #ffb300;
+    --green: #00ff88;
+    --red: #ff4444;
+    --bg: #0a0c10;
+    --panel: #0f1318;
+    --panel2: #131820;
+    --border: #1e2a35;
+    --text: #c8d8e8;
+    --dim: #4a6070;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  }
+
+  .header-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--amber);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    border: 1px solid var(--amber);
+    padding: 4px 16px;
+    margin-bottom: 16px;
+    animation: pulse-border 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% { border-color: var(--amber); box-shadow: 0 0 8px rgba(255,179,0,0.3); }
+    50% { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,212,255,0.4); }
+  }
+
+  .header h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(28px, 5vw, 56px);
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 4px;
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(0,212,255,0.5);
+  }
+
+  .header h1 span { color: var(--cyan); }
+
+  .header-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--dim);
+    letter-spacing: 6px;
+    margin-top: 10px;
+    text-transform: uppercase;
+  }
+
+  /* TAB NAVIGATION */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 10px 20px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    color: var(--dim);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    position: relative;
+    top: 1px;
+  }
+
+  .tab:hover { color: var(--cyan); border-color: var(--cyan); }
+
+  .tab.active {
+    background: var(--panel2);
+    color: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 15px rgba(0,212,255,0.2);
+  }
+
+  /* PAGES */
+  .page { display: none; animation: fadeIn 0.3s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* PANELS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-full { margin-bottom: 16px; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), transparent);
+  }
+
+  .panel.amber::before { background: linear-gradient(90deg, var(--amber), transparent); }
+  .panel.green::before { background: linear-gradient(90deg, var(--green), transparent); }
+  .panel.red::before { background: linear-gradient(90deg, var(--red), transparent); }
+
+  .panel-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .panel-title.amber { color: var(--amber); }
+  .panel-title.green { color: var(--green); }
+  .panel-title.red { color: var(--red); }
+
+  .panel-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* FORMULA BOXES */
+  .formula {
+    background: #060810;
+    border: 1px solid var(--cyan);
+    border-left: 3px solid var(--cyan);
+    padding: 12px 16px;
+    margin: 10px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--cyan);
+    position: relative;
+  }
+
+  .formula.amber { border-color: var(--amber); color: var(--amber); }
+  .formula.green { border-color: var(--green); color: var(--green); }
+
+  .formula-label {
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    font-family: 'Rajdhani', sans-serif;
+    text-transform: uppercase;
+  }
+
+  .formula-main {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .formula-note {
+    font-size: 10px;
+    color: var(--dim);
+    margin-top: 6px;
+    font-family: 'Rajdhani', sans-serif;
+  }
+
+  /* TABLES */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,212,255,0.05);
+  }
+
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(30,42,53,0.5);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+
+  tr:hover td { background: rgba(0,212,255,0.03); }
+
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-weight: 700;
+  }
+
+  .tag-cyan { background: rgba(0,212,255,0.15); color: var(--cyan); border: 1px solid rgba(0,212,255,0.3); }
+  .tag-amber { background: rgba(255,179,0,0.15); color: var(--amber); border: 1px solid rgba(255,179,0,0.3); }
+  .tag-green { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+  .tag-red { background: rgba(255,68,68,0.15); color: var(--red); border: 1px solid rgba(255,68,68,0.3); }
+
+  /* DEFINITION CARDS */
+  .def-card {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .def-card:last-child { border-bottom: none; }
+
+  .def-term {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--amber);
+    letter-spacing: 1px;
+    min-width: 120px;
+    padding-top: 2px;
+  }
+
+  .def-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .def-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    margin-top: 3px;
+  }
+
+  /* ALERT BOX */
+  .alert {
+    background: rgba(255,179,0,0.05);
+    border: 1px solid rgba(255,179,0,0.3);
+    border-left: 3px solid var(--amber);
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+
+  .alert-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    color: var(--amber);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  /* MNEMONIC */
+  .mnemonic {
+    background: rgba(0,255,136,0.05);
+    border: 1px solid rgba(0,255,136,0.2);
+    padding: 14px 18px;
+    margin: 12px 0;
+    text-align: center;
+  }
+
+  .mnemonic-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    color: var(--green);
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+
+  .mnemonic-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--green);
+    letter-spacing: 1px;
+  }
+
+  /* COMPARISON BOXES */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 10px 0;
+  }
+
+  .compare-box {
+    background: #060810;
+    border: 1px solid var(--border);
+    padding: 12px;
+    text-align: center;
+  }
+
+  .compare-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .compare-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .compare-desc { font-size: 12px; color: var(--dim); margin-top: 6px; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 30px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 3px;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+
+  @media (max-width: 900px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .compare { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge">EASA ATPL — Radio Navigation</div>
+    <h1>RADIO <span>NAV</span> MASTER</h1>
+    <div class="header-sub">Electromagnetic Waves · Propagation · Modulation · Radar</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="showPage('em')">EM Waves</div>
+    <div class="tab" onclick="showPage('bands')">Freq Bands</div>
+    <div class="tab" onclick="showPage('prop')">Propagation</div>
+    <div class="tab" onclick="showPage('mod')">Modulation</div>
+    <div class="tab" onclick="showPage('radar')">Radar</div>
+    <div class="tab" onclick="showPage('defs')">Definitions</div>
+  </div>
+
+  <!-- PAGE 1: EM WAVES -->
+  <div class="page active" id="page-em">
+
+    <div class="grid-3">
+      <div class="panel">
+        <div class="panel-title">Core Concepts</div>
+        <div class="def-card">
+          <div class="def-term">CYCLE</div>
+          <div class="def-text">One complete oscillation — full + and − peak sequence</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">PERIOD (τ)</div>
+          <div class="def-text">Time to complete one cycle</div>
+          <div class="def-note">measured in seconds / μs / ms</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">FREQUENCY (f)</div>
+          <div class="def-text">Cycles per second</div>
+          <div class="def-note">measured in Hz / kHz / MHz / GHz</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">WAVELENGTH (λ)</div>
+          <div class="def-text">Distance wave travels during one complete cycle</div>
+          <div class="def-note">measured in metres</div>
+        </div>
+      </div>
+
+      <div class="panel amber">
+        <div class="panel-title amber">Key Formulas</div>
+        <div class="formula amber">
+          <div class="formula-label">Frequency from Period</div>
+          <div class="formula-main">f = 1 / τ</div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">Wavelength</div>
+          <div class="formula-main">λ = c / f</div>
+          <div class="formula-note">c = 3 × 10⁸ m/s (speed of light)</div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">Exam shortcut (f in MHz)</div>
+          <div class="formula-main">λ = 300 / f(MHz)</div>
+          <div class="formula-note">Answer in metres — fastest method!</div>
+        </div>
+        <div class="formula amber">
+          <div class="formula-label">Frequency from Wavelength</div>
+          <div class="formula-main">f = c / λ</div>
+          <div class="formula-note">Convert λ to metres first!</div>
+        </div>
+      </div>
+
+      <div class="panel green">
+        <div class="panel-title green">Unit Conversions</div>
+        <table>
+          <tr><th>Prefix</th><th>Symbol</th><th>Value</th></tr>
+          <tr><td>Kilo</td><td><span class="tag tag-green">kHz</span></td><td>10³ Hz</td></tr>
+          <tr><td>Mega</td><td><span class="tag tag-cyan">MHz</span></td><td>10⁶ Hz</td></tr>
+          <tr><td>Giga</td><td><span class="tag tag-amber">GHz</span></td><td>10⁹ Hz</td></tr>
+          <tr><td>Milli</td><td><span class="tag tag-green">ms</span></td><td>10⁻³ s</td></tr>
+          <tr><td>Micro</td><td><span class="tag tag-cyan">μs</span></td><td>10⁻⁶ s</td></tr>
+          <tr><td>Nano</td><td><span class="tag tag-amber">ns</span></td><td>10⁻⁹ s</td></tr>
+        </table>
+        <div class="alert" style="margin-top:12px">
+          <div class="alert-title">⚠ CALCULATOR TIP</div>
+          Always convert to plain decimal before calculating. 5cm = 0.05m ✓
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title">Antenna Rules</div>
+        <div class="compare">
+          <div class="compare-box">
+            <div class="compare-title" style="color:var(--cyan)">DIPOLE</div>
+            <div class="compare-value" style="color:var(--cyan)">λ/2</div>
+            <div class="compare-desc">Two arms, each λ/4<br>Total = half wavelength</div>
+          </div>
+          <div class="compare-box">
+            <div class="compare-title" style="color:var(--amber)">MARCONI</div>
+            <div class="compare-value" style="color:var(--amber)">λ/4</div>
+            <div class="compare-desc">Vertical rod + ground<br>Ground = mirror image</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel amber">
+        <div class="panel-title amber">Polarization</div>
+        <div class="def-card">
+          <div class="def-term">VERTICAL</div>
+          <div class="def-text">Wave oscillates up/down. Antenna vertical. NDB, VHF comms.</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">HORIZONTAL</div>
+          <div class="def-text">Wave oscillates side to side. Antenna horizontal. VOR, ILS localiser.</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">CIRCULAR</div>
+          <div class="def-text">Wave rotates like corkscrew. Helical antenna. GPS — works at any aircraft attitude.</div>
+        </div>
+        <div class="alert">
+          <div class="alert-title">⚠ GOLDEN RULE</div>
+          TX and RX antennas MUST have same polarization — otherwise massive signal loss!
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PAGE 2: FREQUENCY BANDS -->
+  <div class="page" id="page-bands">
+    <div class="panel grid-full">
+      <div class="panel-title">Frequency Bands — Complete Reference</div>
+      <table>
+        <tr>
+          <th>Band</th>
+          <th>Name</th>
+          <th>Frequency Range</th>
+          <th>Wavelength</th>
+          <th>Wave Type</th>
+          <th>Key Navaids / Uses</th>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">VLF</span></td>
+          <td>Very Low Frequency</td>
+          <td>3 – 30 kHz</td>
+          <td>100 – 10 km</td>
+          <td><span class="tag tag-green">GROUND</span></td>
+          <td>Very long range navigation, submarines</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">LF</span></td>
+          <td>Low Frequency</td>
+          <td>30 – 300 kHz</td>
+          <td>10 – 1 km</td>
+          <td><span class="tag tag-green">GROUND</span></td>
+          <td>NDB, Decca, Loran-C</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">MF</span></td>
+          <td>Medium Frequency</td>
+          <td>300 – 3000 kHz</td>
+          <td>1 km – 100 m</td>
+          <td><span class="tag tag-green">GROUND</span></td>
+          <td>NDB, broadcasting</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-cyan">HF</span></td>
+          <td>High Frequency</td>
+          <td>3 – 30 MHz</td>
+          <td>100 – 10 m</td>
+          <td><span class="tag tag-cyan">SKY</span></td>
+          <td>HF long range comms (oceanic)</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-cyan">VHF</span></td>
+          <td>Very High Frequency</td>
+          <td>30 – 300 MHz</td>
+          <td>10 – 1 m</td>
+          <td><span class="tag tag-amber">SPACE</span></td>
+          <td>VOR, ILS localiser, VHF comms, marker beacons</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-cyan">UHF</span></td>
+          <td>Ultra High Frequency</td>
+          <td>300 – 3000 MHz</td>
+          <td>1 m – 10 cm</td>
+          <td><span class="tag tag-amber">SPACE</span></td>
+          <td>ILS glidepath, DME, GPS, surveillance radar</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-green">SHF</span></td>
+          <td>Super High Frequency</td>
+          <td>3 – 30 GHz</td>
+          <td>10 – 1 cm</td>
+          <td><span class="tag tag-amber">SPACE</span></td>
+          <td>Weather radar, radio altimeter, Doppler</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-green">EHF</span></td>
+          <td>Extremely High Frequency</td>
+          <td>30 – 300 GHz</td>
+          <td>1 cm – 1 mm</td>
+          <td><span class="tag tag-amber">SPACE</span></td>
+          <td>Aerodrome surface movement radar</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="grid-2">
+      <div class="mnemonic">
+        <div class="mnemonic-label">Memory Hook — Band Order</div>
+        <div class="mnemonic-text">Very Low Men Have Very Ugly Short Ears</div>
+        <div style="font-size:12px; color:var(--dim); margin-top:8px; font-family:'JetBrains Mono',monospace;">VLF · LF · MF · HF · VHF · UHF · SHF · EHF</div>
+      </div>
+
+      <div class="panel red">
+        <div class="panel-title red">Critical Navaid ↔ Band Links</div>
+        <div class="def-card">
+          <div class="def-term">NDB</div>
+          <div class="def-text">LF / MF band — 190–1750 kHz</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">VOR</div>
+          <div class="def-text">VHF band — 108–117.95 MHz</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">ILS LOC</div>
+          <div class="def-text">VHF band — 108–112 MHz</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">ILS G/S + DME</div>
+          <div class="def-text">UHF band</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">GPS</div>
+          <div class="def-text">UHF L-band — ~1.5 GHz</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 3: PROPAGATION -->
+  <div class="page" id="page-prop">
+
+    <div class="grid-3">
+      <div class="panel green">
+        <div class="panel-title green">Ground Wave</div>
+        <div style="font-size:14px; line-height:1.7; margin-bottom:12px;">Travels along Earth's surface via <strong style="color:var(--green)">diffraction</strong>. Follows curvature of Earth. Long wavelengths only.</div>
+        <div class="def-card">
+          <div class="def-term">RANGE</div>
+          <div class="def-text">VLF/LF — excellent. MF — moderate. HF — very short. VHF+ — nil.</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">SURFACE</div>
+          <div class="def-text">Sea = high conductivity = long range. Dry sand = low conductivity = short range.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Sky Wave</div>
+        <div style="font-size:14px; line-height:1.7; margin-bottom:12px;">Shoots upward, <strong style="color:var(--cyan)">refracts</strong> through ionosphere, returns to ground. Long range.</div>
+        <div class="def-card">
+          <div class="def-term">DAY</div>
+          <div class="def-text">Strong ionization — HF refracts back ✅. MF absorbed ❌.</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">NIGHT</div>
+          <div class="def-text">Weak ionization — HF escapes to space ❌. MF refracts back ✅.</div>
+        </div>
+        <div class="alert">
+          <div class="alert-title">⚠ NOT REFLECTION!</div>
+          Sky waves REFRACT through ionosphere — they don't reflect off it like a mirror.
+        </div>
+      </div>
+
+      <div class="panel amber">
+        <div class="panel-title amber">Space Wave</div>
+        <div style="font-size:14px; line-height:1.7; margin-bottom:12px;">Travels in straight line. Also called <strong style="color:var(--amber)">quasi-optical</strong>. Line of sight only. VHF and above.</div>
+        <div class="def-card">
+          <div class="def-term">WHY LOS?</div>
+          <div class="def-text">No ionosphere bounce (punches through) + no ground wave (too short λ).</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">NAVAIDS</div>
+          <div class="def-text">VOR, ILS, VHF comms, GPS — all line of sight.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-full panel">
+      <div class="panel-title">Day vs Night Propagation — Quick Reference</div>
+      <table>
+        <tr>
+          <th>Band</th>
+          <th>Daytime</th>
+          <th>Nighttime</th>
+          <th>Fading?</th>
+          <th>Key Effect</th>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">VLF</span></td>
+          <td>Ground + Sky</td>
+          <td>Ground + Sky</td>
+          <td>Minimal</td>
+          <td>Always reliable ground wave</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">LF</span></td>
+          <td>Ground only</td>
+          <td>Ground + Sky</td>
+          <td><span class="tag tag-red">YES — night</span></td>
+          <td>Night effect on NDB</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">MF</span></td>
+          <td>Ground only</td>
+          <td>Ground + Sky</td>
+          <td><span class="tag tag-red">YES — night</span></td>
+          <td>NDB night effect / fading</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-cyan">HF</span></td>
+          <td>Ground (short) + Sky</td>
+          <td>Ground (short) + Sky</td>
+          <td>Skip zone issue</td>
+          <td>Skip distance increases at night</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-green">VHF+</span></td>
+          <td>Space (LOS) only</td>
+          <td>Space (LOS) only</td>
+          <td>No</td>
+          <td>Multipath near structures</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title">HF Skip Zone</div>
+        <div style="font-size:13px; line-height:1.8;">
+          <p style="margin-bottom:10px;">Ground wave dies out → sky wave hasn't landed yet → <strong style="color:var(--red)">DEAD SPACE / SKIP ZONE</strong></p>
+          <div class="formula red" style="border-color:var(--red); color:var(--red);">
+            <div class="formula-label">At Night:</div>
+            <div class="formula-main">Ionization ↓ → Skip distance ↑ → Bigger dead zone</div>
+          </div>
+          <p style="margin-top:10px; font-size:13px; color:var(--dim);">Aircraft can fly INTO the skip zone after sunset — loses HF contact with distant ATC.</p>
+        </div>
+      </div>
+
+      <div class="panel amber">
+        <div class="panel-title amber">Signal Degradation</div>
+        <div class="def-card">
+          <div class="def-term">ATTENUATION</div>
+          <div class="def-text">Signal weakens with range. Higher freq = more attenuation by weather.</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">SCATTERING</div>
+          <div class="def-text">Wave hits droplets → energy spreads in random directions.</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">ABSORPTION</div>
+          <div class="def-text">Wave energy converted to heat by atmosphere/ionosphere.</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">MULTIPATH</div>
+          <div class="def-text">Same signal arrives from multiple directions via reflections. Causes bearing errors.</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">FADING</div>
+          <div class="def-text">Destructive interference between sky + ground wave. Night effect on MF/HF.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PAGE 4: MODULATION -->
+  <div class="page" id="page-mod">
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title">Types of Modulation</div>
+        <div class="def-card">
+          <div class="def-term">AMPLITUDE (AM)</div>
+          <div class="def-text">Height of wave changes. Frequency stays constant. Most common in aviation.</div>
+          <div class="def-note">→ VHF comms, HF comms, VOR, ILS, ADF/NDB</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">FREQUENCY (FM)</div>
+          <div class="def-text">Frequency changes. Amplitude stays constant. More resistant to interference.</div>
+          <div class="def-note">→ Sound broadcasting (not aviation navaids)</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">PHASE (PM)</div>
+          <div class="def-text">Phase of carrier wave reverses 180°. Very precise. Used in GNSS.</div>
+          <div class="def-note">→ GPS, MLS</div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">PULSE</div>
+          <div class="def-text">Carrier switched ON/OFF rapidly. Short bursts, then silence for listening.</div>
+          <div class="def-note">→ Radar, DME</div>
+        </div>
+      </div>
+
+      <div class="panel amber">
+        <div class="panel-title amber">Modulation by Navaid</div>
+        <table>
+          <tr><th>Modulation</th><th>Used In</th></tr>
+          <tr><td><span class="tag tag-cyan">Amplitude (AM)</span></td><td>VHF comms, HF comms, VOR, ILS, ADF</td></tr>
+          <tr><td><span class="tag tag-green">Phase (PM)</span></td><td>GPS, MLS</td></tr>
+          <tr><td><span class="tag tag-amber">Pulse</span></td><td>Radar, DME</td></tr>
+          <tr><td><span class="tag tag-red">Frequency (FM)</span></td><td>Sound broadcasting only</td></tr>
+        </table>
+        <div class="alert" style="margin-top:14px">
+          <div class="alert-title">⚠ EXAM TRAP</div>
+          VOR and ILS use AMPLITUDE modulation — not phase or frequency! GPS uses PHASE modulation.
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel green">
+        <div class="panel-title green">ITU Emission Codes</div>
+        <table>
+          <tr><th>Position</th><th>What It Means</th></tr>
+          <tr><td><span class="tag tag-green">1st (letter)</span></td><td>Type of modulation</td></tr>
+          <tr><td><span class="tag tag-cyan">2nd (number)</span></td><td>Type of modulating signal</td></tr>
+          <tr><td><span class="tag tag-amber">3rd (letter)</span></td><td>Type of information transmitted</td></tr>
+        </table>
+        <div style="margin-top:14px;">
+          <div class="formula green">
+            <div class="formula-label">Key codes to know</div>
+            <div class="formula-main" style="font-size:13px; line-height:2;">
+              N0N — No modulation (NDB carrier)<br>
+              A1A — AM keyed morse (NDB ident)<br>
+              A2A — AM tone morse (NDB ident)<br>
+              A3E — AM speech = VHF comms<br>
+              J3E — SSB suppressed = HF comms
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Sidebands</div>
+        <div class="compare">
+          <div class="compare-box">
+            <div class="compare-title" style="color:var(--cyan)">A3E — VHF</div>
+            <div class="compare-value" style="color:var(--cyan); font-size:14px;">DOUBLE<br>SIDEBAND</div>
+            <div class="compare-desc">Both sidebands + full carrier kept. Short range — power not an issue.</div>
+          </div>
+          <div class="compare-box">
+            <div class="compare-title" style="color:var(--amber)">J3E — HF</div>
+            <div class="compare-value" style="color:var(--amber); font-size:14px;">SINGLE<br>SIDEBAND</div>
+            <div class="compare-desc">One sideband removed, carrier suppressed. Long range — efficiency critical.</div>
+          </div>
+        </div>
+        <div class="mnemonic" style="margin-top:12px;">
+          <div class="mnemonic-label">Memory Hook</div>
+          <div class="mnemonic-text">Short trip = pack everything (VHF/A3E)<br>Long trip = pack light (HF/J3E)</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PAGE 5: RADAR -->
+  <div class="page" id="page-radar">
+
+    <div class="grid-3">
+      <div class="panel amber">
+        <div class="panel-title amber">Propagation Delay</div>
+        <div class="formula amber">
+          <div class="formula-label">Distance to target</div>
+          <div class="formula-main">D = (c × t) / 2</div>
+          <div class="formula-note">÷2 because round trip (there AND back)</div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">Time from distance</div>
+          <div class="formula-main">t = (2 × D) / c</div>
+        </div>
+        <div class="alert" style="margin-top:12px;">
+          <div class="alert-title">⚠ ALWAYS</div>
+          Speed of LIGHT (c = 3×10⁸ m/s) — NEVER speed of sound!
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Minimum Range</div>
+        <div class="formula">
+          <div class="formula-label">Minimum detection range</div>
+          <div class="formula-main">R_min = (c × PL) / 2</div>
+          <div class="formula-note">PL = Pulse Length (in seconds/μs)</div>
+        </div>
+        <div class="formula amber">
+          <div class="formula-label">Pulse length from min range</div>
+          <div class="formula-main">PL = (2 × R_min) / c</div>
+        </div>
+        <div style="font-size:13px; margin-top:12px; line-height:1.7; color:var(--dim);">
+          While transmitting, antenna is DEAF. Echoes from close targets arrive during TX pulse → missed! Shorter pulse = better close range.
+        </div>
+      </div>
+
+      <div class="panel green">
+        <div class="panel-title green">Max Unambiguous Range</div>
+        <div class="formula green">
+          <div class="formula-label">Maximum Unambiguous Range</div>
+          <div class="formula-main">MUR = c / (2 × PRF)</div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">PRF from MUR</div>
+          <div class="formula-main">PRF = c / (2 × MUR)</div>
+        </div>
+        <div class="compare" style="margin-top:12px;">
+          <div class="compare-box">
+            <div class="compare-title" style="color:var(--red)">HIGH PRF</div>
+            <div class="compare-value" style="color:var(--red)">SHORT</div>
+            <div class="compare-desc">MUR — pulses too frequent, gets confused</div>
+          </div>
+          <div class="compare-box">
+            <div class="compare-title" style="color:var(--green)">LOW PRF</div>
+            <div class="compare-value" style="color:var(--green)">LONG</div>
+            <div class="compare-desc">MUR — more time between pulses</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title">PRF ↔ PRI Relationship</div>
+        <div class="formula">
+          <div class="formula-label">Same as f = 1/τ !</div>
+          <div class="formula-main">PRF = 1 / PRI &nbsp;&nbsp; PRI = 1 / PRF</div>
+          <div class="formula-note">PRF = Pulse Repetition Frequency (Hz) | PRI = Pulse Repetition Interval (seconds)</div>
+        </div>
+        <div style="font-size:13px; margin-top:14px; color:var(--dim); line-height:1.8;">
+          <strong style="color:var(--text)">PRI</strong> = the silence between pulses — listening time<br>
+          <strong style="color:var(--text)">PRF</strong> = how many pulses per second<br>
+          Longer PRI → lower PRF → longer MUR
+        </div>
+      </div>
+
+      <div class="panel amber">
+        <div class="panel-title amber">Formula Summary Table</div>
+        <table>
+          <tr><th>Find</th><th>Formula</th></tr>
+          <tr><td>Wavelength</td><td><span class="tag tag-cyan">λ = c / f</span> or 300/f(MHz)</td></tr>
+          <tr><td>Frequency</td><td><span class="tag tag-cyan">f = c / λ</span></td></tr>
+          <tr><td>Min Range</td><td><span class="tag tag-amber">(c × PL) / 2</span></td></tr>
+          <tr><td>Pulse Length</td><td><span class="tag tag-amber">(2 × R_min) / c</span></td></tr>
+          <tr><td>MUR</td><td><span class="tag tag-green">c / (2 × PRF)</span></td></tr>
+          <tr><td>PRF</td><td><span class="tag tag-green">c / (2 × MUR)</span></td></tr>
+          <tr><td>PRF from PRI</td><td><span class="tag tag-green">1 / PRI</span></td></tr>
+          <tr><td>PRI from PRF</td><td><span class="tag tag-green">1 / PRF</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PAGE 6: DEFINITIONS -->
+  <div class="page" id="page-defs">
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title">Golden Definitions</div>
+        <div class="def-card">
+          <div class="def-term">FADING</div>
+          <div><div class="def-text">Interference of sky waves with ground waves</div><div class="def-note">Only happens at night when both exist — MF/HF</div></div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">MODULATION</div>
+          <div><div class="def-text">Adding information onto a carrier wave during transmission</div><div class="def-note">AM / FM / Phase / Pulse</div></div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">DIFFRACTION</div>
+          <div><div class="def-text">Radio wave bends over and around obstacles</div><div class="def-note">Better at low freq (long λ). NDB diffracts, VOR doesn't</div></div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">ABSORPTION</div>
+          <div><div class="def-text">Radio wave energy taken up by atmosphere</div><div class="def-note">MF sky wave absorbed by ionosphere during daytime</div></div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">ATTENUATION</div>
+          <div><div class="def-text">Signal loses strength as range increases</div><div class="def-note">Higher freq = more attenuation by weather/rain</div></div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">INTERFERENCE</div>
+          <div><div class="def-text">Superimposition of two waves at same/similar frequency</div><div class="def-note">Constructive = stronger | Destructive = weaker/cancels</div></div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">REFLECTION</div>
+          <div><div class="def-text">Wave bounces off boundary without passing through</div><div class="def-note">Primary radar, multipath off buildings</div></div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">REFRACTION</div>
+          <div><div class="def-text">Wave changes direction due to change in speed/medium</div><div class="def-note">HF sky waves in ionosphere — NOT reflection!</div></div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">MULTIPATH</div>
+          <div><div class="def-text">Same signal arrives from multiple directions via reflections off structures</div><div class="def-note">Causes bearing errors in VOR, ILS, GPS</div></div>
+        </div>
+        <div class="def-card">
+          <div class="def-term">SUPERPOSITION</div>
+          <div><div class="def-text">When two or more waves meet, they add together at that point</div><div class="def-note">The principle that causes interference/fading</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="panel amber">
+          <div class="panel-title amber">ILS Areas</div>
+          <div class="def-card">
+            <div class="def-term">CRITICAL</div>
+            <div><div class="def-text">Vehicles and aircraft EXCLUDED during all ILS ops</div></div>
+          </div>
+          <div class="def-card">
+            <div class="def-term">SENSITIVE</div>
+            <div><div class="def-text">Vehicles and aircraft CONTROLLED during all ILS ops</div></div>
+          </div>
+          <div class="def-card">
+            <div class="def-term">COVERAGE</div>
+            <div><div class="def-text">Any obstacle here can cause multipath interference</div></div>
+          </div>
+        </div>
+
+        <div class="panel green">
+          <div class="panel-title green">VOR vs NDB — Variation Rule</div>
+          <div class="compare">
+            <div class="compare-box">
+              <div class="compare-title" style="color:var(--cyan)">VOR</div>
+              <div class="compare-value" style="color:var(--cyan); font-size:15px;">STATION</div>
+              <div class="compare-desc">Radial encoded at station using local variation</div>
+            </div>
+            <div class="compare-box">
+              <div class="compare-title" style="color:var(--amber)">NDB</div>
+              <div class="compare-value" style="color:var(--amber); font-size:15px;">AIRCRAFT</div>
+              <div class="compare-desc">ADF points toward signal — measured at aircraft</div>
+            </div>
+          </div>
+          <div class="formula green" style="margin-top:12px;">
+            <div class="formula-label">CDMVT Chain (Compass → True)</div>
+            <div class="formula-main" style="font-size:13px;">Compass ±Deviation → Magnetic ±Variation → True</div>
+            <div class="formula-note">East = ADD | West = SUBTRACT</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">RBI vs RMI</div>
+          <table>
+            <tr><th></th><th>RBI</th><th>RMI</th></tr>
+            <tr><td>Reference</td><td>Aircraft nose (000°)</td><td>Magnetic North</td></tr>
+            <tr><td>Shows</td><td>Relative bearing</td><td>Magnetic bearing</td></tr>
+            <tr><td>Add heading?</td><td><span class="tag tag-red">YES</span></td><td><span class="tag tag-green">NO</span></td></tr>
+            <tr><td>Yellow needle</td><td colspan="2">ADF / NDB</td></tr>
+            <tr><td>Green needle</td><td colspan="2">VOR</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    EASA ATPL · Radio Navigation · Ultimate Design · Built with Claude
+  </div>
+
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
