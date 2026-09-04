@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RNAV Systems — ATPL Study Poster</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0e14;
+  --bg-secondary: #111820;
+  --bg-card: #141c28;
+  --bg-card-hover: #1a2436;
+  --cyan: #00e5ff;
+  --cyan-dim: #00e5ff44;
+  --amber: #ffb300;
+  --amber-dim: #ffb30044;
+  --green: #00e676;
+  --green-dim: #00e67644;
+  --red: #ff1744;
+  --red-dim: #ff174444;
+  --white: #e8eaf0;
+  --white-dim: #8892a4;
+  --border: #1e2a3a;
+  --glow-cyan: 0 0 20px #00e5ff33, 0 0 40px #00e5ff11;
+  --glow-amber: 0 0 20px #ffb30033, 0 0 40px #ffb30011;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg-primary);
+  color: var(--white);
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Background grid */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: 
+    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Scanline effect */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.05) 2px,
+    rgba(0,0,0,0.05) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 30px 0 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--cyan), var(--amber));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  margin-bottom: 8px;
+}
+
+.header .subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--white-dim);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+/* Tab Navigation */
+.tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 24px;
+  padding: 4px;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.tab-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 12px 16px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--white-dim);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-btn:hover {
+  color: var(--white);
+  background: var(--bg-card);
+}
+
+.tab-btn.active {
+  color: var(--cyan);
+  background: var(--bg-card);
+  box-shadow: var(--glow-cyan);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 20%; right: 20%;
+  height: 2px;
+  background: var(--cyan);
+  border-radius: 1px;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Section Title */
+.section-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--cyan-dim);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-title .icon {
+  font-size: 1.2rem;
+}
+
+.section-title .freq-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  padding: 4px 10px;
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  border-radius: 4px;
+  letter-spacing: 1px;
+  margin-left: auto;
+}
+
+/* Cards Grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--cyan-dim);
+}
+
+.card-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.card p, .card li {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--white);
+}
+
+.card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.card li {
+  padding: 4px 0;
+  padding-left: 16px;
+  position: relative;
+}
+
+.card li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+/* Highlight values */
+.val {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--amber);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.val-cyan {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--cyan);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.val-green {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--green);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.val-red {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--red);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Comparison Table */
+.comp-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.comp-table th {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  background: var(--bg-secondary);
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.comp-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--white);
+  background: var(--bg-card);
+}
+
+.comp-table tr:last-child td {
+  border-bottom: none;
+}
+
+.comp-table tr:hover td {
+  background: var(--bg-card-hover);
+}
+
+/* Formula Box */
+.formula-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--amber-dim);
+  border-left: 3px solid var(--amber);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 12px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--amber);
+  line-height: 1.8;
+}
+
+.formula-box .label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--white-dim);
+  margin-bottom: 6px;
+}
+
+/* Tip Box */
+.tip-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--green-dim);
+  border-left: 3px solid var(--green);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  font-size: 0.9rem;
+  color: var(--green);
+  line-height: 1.6;
+}
+
+.tip-box .label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* Warning Box */
+.warn-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  font-size: 0.9rem;
+  color: var(--red);
+  line-height: 1.6;
+}
+
+/* Full width card */
+.card-full {
+  grid-column: 1 / -1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header h1 { font-size: 1.4rem; letter-spacing: 3px; }
+  .tab-btn { font-size: 0.55rem; padding: 8px 8px; min-width: 60px; letter-spacing: 1px; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .container { padding: 10px; }
+}
+
+/* Q-code mini table */
+.qcode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.qcode-item {
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+}
+
+.qcode-item .code {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.qcode-item .desc {
+  font-size: 0.8rem;
+  color: var(--white-dim);
+  margin-top: 2px;
+}
+
+/* Marker visual */
+.marker-row {
+  display: flex;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.marker-item {
+  flex: 1;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+.marker-item.om { background: #0d47a122; border-color: #42a5f544; }
+.marker-item.mm { background: #ff8f0022; border-color: #ffb30044; }
+.marker-item.im { background: #ffffff11; border-color: #ffffff33; }
+
+.marker-item .light {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+}
+
+.marker-item.om .light { background: #42a5f5; box-shadow: 0 0 12px #42a5f5; }
+.marker-item.mm .light { background: #ffb300; box-shadow: 0 0 12px #ffb300; }
+.marker-item.im .light { background: #ffffff; box-shadow: 0 0 12px #ffffff; }
+
+.marker-item .name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.marker-item .detail {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--white-dim);
+  line-height: 1.5;
+}
+
+/* Category boxes for ILS */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.cat-item {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.cat-item .cat-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.cat-item .cat-dh {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--amber);
+}
+
+.cat-item .cat-rvr {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--white-dim);
+  margin-top: 2px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+  <h1>Radio Navigation Systems</h1>
+  <div class="subtitle">EASA ATPL — RNAV Study Poster · NDB · DME · ILS · MLS · SSR · GNSS</div>
+</div>
+
+<!-- Tab Navigation -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('ndb')">NDB / ADF</button>
+  <button class="tab-btn" onclick="switchTab('dme')">DME</button>
+  <button class="tab-btn" onclick="switchTab('ils')">ILS</button>
+  <button class="tab-btn" onclick="switchTab('mls')">MLS</button>
+  <button class="tab-btn" onclick="switchTab('ssr')">SSR</button>
+  <button class="tab-btn" onclick="switchTab('gnss')">GNSS</button>
+  <button class="tab-btn" onclick="switchTab('pbn')">PBN</button>
+  <button class="tab-btn" onclick="switchTab('freq')">Frequencies</button>
+</div>
+
+<!-- ===== NDB / ADF ===== -->
+<div id="ndb" class="tab-content active">
+  <div class="section-title">
+    <span class="icon">📡</span> NDB / ADF
+    <span class="freq-badge">LF/MF · 190–1750 kHz</span>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>NDB Types</div>
+      <ul>
+        <li><span class="val">En-route NDBs</span> — high power, used for airways navigation, range up to <span class="val">250 NM</span></li>
+        <li><span class="val">Locator beacons</span> — low power, used for airfield/approach, range <span class="val">10–25 NM</span></li>
+        <li>Locators often co-located with ILS outer marker (<span class="val">LOM</span>) or middle marker (<span class="val">LMM</span>)</li>
+        <li>NDBs are different from marker beacons — locators provide directional guidance TO the approach fix</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Modulation Types</div>
+      <ul>
+        <li><span class="val">A1A</span> — Carrier with keyed Morse. Carrier switches ON/OFF. BFO needed to hear ident. Bearing <span class="val-red">erratic during ident</span></li>
+        <li><span class="val">A2A</span> — Carrier with AM Morse. Tone audible without BFO. Bearing <span class="val-green">stable during ident</span></li>
+        <li><span class="val">A3E</span> — Carrier with AM speech (VHF-COM)</li>
+        <li>First symbol indicates modulation type of main carrier</li>
+        <li>In A1A keying, amplitude and frequency both remain constant</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>ADF Instruments</div>
+      <ul>
+        <li><span class="val-cyan">RBI</span> (Relative Bearing Indicator) — fixed card, 000° always at top, shows relative bearing only. Must add heading: <span class="val">QDM = HDG + RB</span></li>
+        <li><span class="val-cyan">RMI</span> (Radio Magnetic Indicator) — rotating card driven by flux valve, shows magnetic bearing directly. Just read head (QDM) and tail (QDR)</li>
+        <li>RMI = no math needed. RBI = must calculate</li>
+        <li>For IAA exams: <span class="val-green">no deviation correction on RMI</span> (flux valve gives magnetic heading directly)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Q-Codes</div>
+      <div class="qcode-grid">
+        <div class="qcode-item"><div class="code">QDM</div><div class="desc">Magnetic TO station</div></div>
+        <div class="qcode-item"><div class="code">QDR</div><div class="desc">Magnetic FROM station</div></div>
+        <div class="qcode-item"><div class="code">QUJ</div><div class="desc">True TO station</div></div>
+        <div class="qcode-item"><div class="code">QTE</div><div class="desc">True FROM station</div></div>
+      </div>
+      <div class="formula-box" style="margin-top: 12px;">
+        <div class="label">Formulas</div>
+        QUJ = True Heading + Relative Bearing<br>
+        QTE = QUJ ± 180°<br>
+        QDM = QDR ± 180°
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>NDB Errors</div>
+      <ul>
+        <li><span class="val-red">Dip error</span> — caused by banking. ADF antenna tilts, needle goes erratic during turns. Key word: "rapidly moves upon banking"</li>
+        <li><span class="val-red">Quadrantal error</span> — aircraft metallic structure re-radiates signal. Steady error at 045°/135°/225°/315° RB. Always present, not related to banking</li>
+        <li><span class="val-red">Mountain effect (Diffraction)</span> — long NDB waves bend around mountains, causing bearing errors</li>
+        <li><span class="val-red">Coastal refraction</span> — wave changes speed crossing coastline (faster over sea, slower over land). Worst at acute angles to coast</li>
+        <li><span class="val-red">Night effect (Skywave)</span> — ionospheric reflection at night causes bearing errors</li>
+        <li><span class="val-red">Absorption</span> — terrain absorbs ground wave energy, reducing range. Why transmitter power matters</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Accuracy & Homing vs Tracking</div>
+      <ul>
+        <li>ADF accuracy by day: <span class="val">±5°</span></li>
+        <li>VDF accuracy: <span class="val">±2°</span></li>
+      </ul>
+      <div style="margin-top: 10px;">
+        <ul>
+          <li><span class="val-cyan">Homing</span> — keep needle on nose (RB 000°), no wind correction, curved path, works <span class="val">TO</span> the NDB only</li>
+          <li><span class="val-cyan">Tracking</span> — apply WCA for straight ground track, works <span class="val">TO or FROM</span> the NDB</li>
+        </ul>
+      </div>
+      <div class="tip-box">
+        <div class="label">Wave Propagation Errors</div>
+        NDB → Diffraction (bends around obstacles)<br>
+        VOR → Reflection (bounces off obstacles)<br>
+        NDB-D, VOR-R — D before R, like NDB before VOR
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DME ===== -->
+<div id="dme" class="tab-content">
+  <div class="section-title">
+    <span class="icon">📏</span> DME
+    <span class="freq-badge">UHF · 960–1215 MHz</span>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Operating Principle</div>
+      <ul>
+        <li>Aircraft sends interrogation pulse on UHF</li>
+        <li>Ground station receives, waits <span class="val">50 μs</span> delay, replies</li>
+        <li>Aircraft measures round trip time → calculates distance</li>
+        <li>Each aircraft uses <span class="val">unique random jitter pattern</span> to identify its own replies</li>
+        <li>Maximum capacity: <span class="val">100 aircraft</span> (~2700 pulse pairs/sec ÷ 27 per aircraft)</li>
+        <li>When saturated, strongest signals (closest aircraft) prioritised</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Slant Range</div>
+      <p>DME measures <span class="val-red">slant range</span> (diagonal), not ground distance. Error worst when close and high.</p>
+      <div class="formula-box">
+        <div class="label">Slant Range Formula</div>
+        Slant Range = √(ground distance² + height²)<br><br>
+        Negligible when distance > 3× height
+      </div>
+      <div class="tip-box">
+        <div class="label">DME Line of Position</div>
+        On a chart, DME LOP is plotted as a circle at ground distance, centred on the DME station (not aircraft)
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Distance Calculation</div>
+      <div class="formula-box">
+        <div class="label">DME Distance Formula</div>
+        1. Subtract ground delay: time − 50 μs<br>
+        2. Convert to km: result ÷ 3.33 μs/km<br>
+        3. Convert to NM: km ÷ 1.852<br>
+        4. Divide by 2 (round trip)
+      </div>
+      <p style="margin-top: 8px; color: var(--white-dim);">Key numbers: <span class="val">50 μs</span> delay · <span class="val">3.33 μs</span> per km · <span class="val">1.852</span> km/NM</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>DME Groundspeed</div>
+      <ul>
+        <li>DME calculates groundspeed from <span class="val">rate of range change</span> — not actual groundspeed</li>
+        <li>Only accurate when flying <span class="val-green">directly toward or away</span> from station</li>
+        <li>On a <span class="val-cyan">DME arc</span>: groundspeed reads <span class="val">~0 kts</span> because slant range isn't changing</li>
+        <li>Descending on a DME arc: slant range remains essentially constant, so GS still reads ~0</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Frequency Pairing & Ident</div>
+      <ul>
+        <li>DME (UHF) is <span class="val">automatically paired</span> with VOR/ILS (VHF) — one tuning action</li>
+        <li>63 MHz offset between interrogation and reply frequencies</li>
+        <li>Pulse spacing: <span class="val">12 μs</span> (X channels), <span class="val">36 μs</span> (Y channels)</li>
+      </ul>
+      <div style="margin-top: 10px;">
+        <p><span class="val-cyan">Co-located ident cycle (40 sec):</span></p>
+        <ul>
+          <li>VOR ident × 3 at <span class="val">1020 Hz</span> (lower pitch)</li>
+          <li>DME ident × 1 at <span class="val">1350 Hz</span> (higher pitch)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Special Features</div>
+      <ul>
+        <li><span class="val-cyan">Echo Protection Circuit (EPC)</span> — ignores reflected/multipath signals, tracks only the first (direct) reply</li>
+        <li><span class="val-cyan">Memory mode</span> — if signal interrupted (antenna masking), holds last distance for <span class="val">10–15 seconds</span> before going to search mode</li>
+        <li><span class="val-cyan">TACAN</span> — military system. Bearing = military only. DME = usable by civilians. VORTAC = VOR + TACAN co-located</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ILS ===== -->
+<div id="ils" class="tab-content">
+  <div class="section-title">
+    <span class="icon">✈️</span> ILS
+    <span class="freq-badge">LOC: VHF 108–112 MHz · GP: UHF 329–335 MHz</span>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Components & Coverage</div>
+      <ul>
+        <li><span class="val-cyan">Localizer</span> — far end of runway, lateral guidance</li>
+        <li>Coverage: <span class="val">±10°</span> to <span class="val">25 NM</span> · <span class="val">±35°</span> to <span class="val">17 NM</span></li>
+        <li>Full scale deflection = <span class="val">2.5°</span> off centerline</li>
+        <li><span class="val-cyan">Glideslope</span> — side of runway, vertical guidance</li>
+        <li>Coverage: <span class="val">±8°</span> to <span class="val">10 NM</span> minimum</li>
+        <li>Full scale deflection = <span class="val">0.7°</span> off glidepath</li>
+        <li>Beam thickness: <span class="val">1.4°</span> (0.7° either side)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>How ILS Works — DDM</div>
+      <p>ILS uses <span class="val">Amplitude Modulation</span> with two tones: <span class="val">90 Hz</span> and <span class="val">150 Hz</span>. Position determined by <span class="val-cyan">Difference in Depth of Modulation (DDM)</span>.</p>
+      <ul style="margin-top: 8px;">
+        <li>Left of centerline → 90 Hz dominates → fly right</li>
+        <li>Right of centerline → 150 Hz dominates → fly left</li>
+        <li>On centerline → equal modulation (40% each) → DDM = 0</li>
+      </ul>
+      <div class="tip-box">
+        <div class="label">System Measurement Methods</div>
+        ILS → Depth (DDM) · VOR → Phase · MLS → Time · DME → Time (round trip)
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Glideslope Details</div>
+      <ul>
+        <li>Standard angle: <span class="val">3°</span> (range 2.5°–3.5°)</li>
+        <li>Vertical coverage: lower <span class="val">0.45 × θ</span>, upper <span class="val">1.75 × θ</span></li>
+        <li>For 3°: coverage <span class="val">1.35°</span> to <span class="val">5.25°</span></li>
+        <li><span class="val-red">False glideslope</span> at ~2–3× θ (6°–9°) with reversed sense</li>
+        <li>Always intercept from <span class="val-green">below</span> to avoid false GS</li>
+      </ul>
+      <div class="formula-box">
+        <div class="label">Rate of Descent</div>
+        ROD = (GS angle × Groundspeed × 100) ÷ 60<br>
+        Shortcut for 3°: ROD ≈ GS × 5
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>ILS Categories</div>
+      <div class="cat-grid">
+        <div class="cat-item">
+          <div class="cat-label">CAT I</div>
+          <div class="cat-dh">DH 200 ft</div>
+          <div class="cat-rvr">RVR 550m</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-label">CAT II</div>
+          <div class="cat-dh">DH 100 ft</div>
+          <div class="cat-rvr">RVR 300m</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-label">CAT IIIA</div>
+          <div class="cat-dh">DH 50 ft</div>
+          <div class="cat-rvr">RVR 200m</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-label">CAT IIIB</div>
+          <div class="cat-dh">DH <50 ft</div>
+          <div class="cat-rvr">RVR 75m</div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-label">CAT IIIC</div>
+          <div class="cat-dh">No DH</div>
+          <div class="cat-rvr">No RVR limit</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Marker Beacons</div>
+      <p>All markers: <span class="val">75 MHz</span> carrier, AM, horizontally polarised, fan-shaped beam pointing up</p>
+      <div class="marker-row">
+        <div class="marker-item om">
+          <div class="light"></div>
+          <div class="name">OUTER</div>
+          <div class="detail">
+            Blue · 400 Hz<br>
+            Dashes (2/sec)<br>
+            4–7 NM · FAF
+          </div>
+        </div>
+        <div class="marker-item mm">
+          <div class="light"></div>
+          <div class="name">MIDDLE</div>
+          <div class="detail">
+            Amber · 1300 Hz<br>
+            Dots & Dashes<br>
+            0.5–0.8 NM · CAT I
+          </div>
+        </div>
+        <div class="marker-item im">
+          <div class="light"></div>
+          <div class="name">INNER</div>
+          <div class="detail">
+            White · 3000 Hz<br>
+            Dots (6/sec)<br>
+            Threshold · CAT II
+          </div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <div class="label">Memory Trick</div>
+        B.A.W (Blue→Amber→White) far to near. Frequency UP as you get closer: 400→1300→3000 Hz
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>ILS Signal Issues</div>
+      <ul>
+        <li><span class="val-cyan">Beam bends</span> — slow, gentle deviations. Normal and expected. Aircraft CAN follow. Checked by flight tests</li>
+        <li><span class="val-cyan">Scalloping</span> — rapid, erratic needle movements. Aircraft CANNOT follow. Don't chase — fly stable approach</li>
+        <li><span class="val-cyan">FM Immunity Filter</span> — protects <span class="val">localizer only</span> from FM radio interference (FM radio band 87.5–108 MHz is adjacent to LOC 108–112 MHz)</li>
+      </ul>
+      <div style="margin-top: 12px;">
+        <p><span class="val-cyan">Protected Areas:</span></p>
+        <ul>
+          <li><span class="val-red">Critical area</span> — vehicles/aircraft completely EXCLUDED during all ILS ops</li>
+          <li><span class="val">Sensitive area</span> — vehicles/aircraft CONTROLLED during CAT II/III ops</li>
+          <li><span class="val-cyan">Coverage area</span> — obstacles monitored, can cause multipath</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Back Course & Cross-Check</div>
+      <ul>
+        <li><span class="val-cyan">Back course</span> — signal from back of localizer antenna, non-precision (no glideslope)</li>
+        <li>Causes <span class="val-red">reverse sensing</span> on CDI — set front course heading on HSI or use BC mode to correct</li>
+        <li><span class="val-cyan">GS cross-check:</span> verify correct glideslope by comparing <span class="val">baro-altitude</span> vs <span class="val">DME distance</span> against published chart values</li>
+        <li><span class="val-red">Continuation bias</span> — dangerous tendency to continue approach when conditions say go around</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MLS ===== -->
+<div id="mls" class="tab-content">
+  <div class="section-title">
+    <span class="icon">🎯</span> MLS
+    <span class="freq-badge">SHF · 5031–5091 MHz</span>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Overview</div>
+      <ul>
+        <li>Designed to replace ILS — technically superior but killed by GPS/GNSS</li>
+        <li>Peak deployment: ~<span class="val">200 systems</span> worldwide, now almost none</li>
+        <li>Uses <span class="val-cyan">Time Reference Scanning Beam (TRSB)</span> principle</li>
+        <li>SHF band: <span class="val">5031–5090.7 MHz</span>, vertically polarised</li>
+        <li><span class="val">200 channels</span> available, <span class="val">300 kHz</span> separation</li>
+        <li>Can be sited in hilly terrain — no need for flat, leveled ground</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Ground Components</div>
+      <p>Three <span class="val">separate</span> components:</p>
+      <ul>
+        <li><span class="val-cyan">Azimuth transmitter</span> — far end of runway, scans left-right, lateral guidance. Coverage: <span class="val">±40°</span> to <span class="val">20 NM</span></li>
+        <li><span class="val-cyan">Elevation transmitter</span> — side of runway, scans up-down, vertical guidance. Glideslopes <span class="val">0.9°–20°</span> selectable</li>
+        <li><span class="val-cyan">DME facility</span> (DME/P) — precision distance, NOT marker beacons</li>
+      </ul>
+      <p style="margin-top: 8px; color: var(--white-dim);">Back azimuth: ±20° of runway direction, up to 15° elevation, 10 NM range, 10,000 ft height</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>How TRSB Works</div>
+      <ul>
+        <li>Narrow beam sweeps "TO" (left→right), then "FRO" (right→left)</li>
+        <li>Aircraft measures <span class="val">time between TO and FRO</span> scans</li>
+        <li>Time difference = exact angular position</li>
+        <li>Same principle for elevation: beam scans up then down</li>
+        <li>Result: precise 3D position anywhere within coverage volume</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Advantages Over ILS</div>
+      <ul>
+        <li><span class="val-green">Curved & segmented approaches</span> — not limited to one straight path</li>
+        <li><span class="val-green">Selectable glideslope angle</span> — pilot chooses descent angle</li>
+        <li><span class="val-green">200 channels</span> vs ILS 40 — no frequency congestion</li>
+        <li><span class="val-green">Hilly terrain siting</span> — no flat ground required</li>
+        <li><span class="val-green">Minimal multipath</span> — scanning beam can be interrupted to avoid reflections from stationary objects</li>
+        <li><span class="val-green">Higher frequency (SHF)</span> — reduces ground reflection effects</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Cockpit Operation</div>
+      <ul>
+        <li>Tuning: select <span class="val">channel number</span> (not frequency)</li>
+        <li>Select <span class="val">glideslope angle</span> for approach</li>
+        <li>Display: <span class="val-cyan">2D presentation</span> (same CDI cross-hairs as ILS)</li>
+        <li>Approach type: <span class="val-cyan">3D segmented</span> (multiple straight segments joined at different angles)</li>
+      </ul>
+      <div class="warn-box">
+        MLS can minimise multipath errors because the transmission can be interrupted to avoid reflection by stationary objects — the scanning beam is blanked as it passes known reflective obstacles
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>MLS vs ILS Comparison</div>
+      <table class="comp-table">
+        <tr><th>Feature</th><th>ILS</th><th>MLS</th></tr>
+        <tr><td>Frequency</td><td class="val">VHF/UHF</td><td class="val">SHF</td></tr>
+        <tr><td>Channels</td><td class="val">40</td><td class="val">200</td></tr>
+        <tr><td>Azimuth coverage</td><td class="val">±10° / ±35°</td><td class="val">±40°</td></tr>
+        <tr><td>Glideslope</td><td class="val">Fixed (3°)</td><td class="val">Selectable</td></tr>
+        <tr><td>Approach path</td><td>Straight only</td><td>Segmented/curved</td></tr>
+        <tr><td>Terrain siting</td><td>Flat required</td><td>Hilly OK</td></tr>
+        <tr><td>Range</td><td class="val">25 NM</td><td class="val">20 NM</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SSR ===== -->
+<div id="ssr" class="tab-content">
+  <div class="section-title">
+    <span class="icon">🛡️</span> SSR / Transponder
+    <span class="freq-badge">Interrogation: 1030 MHz · Reply: 1090 MHz</span>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Interrogation Pulses</div>
+      <ul>
+        <li><span class="val">P1</span> — main interrogation pulse (directional antenna)</li>
+        <li><span class="val">P2</span> — side lobe suppression (omnidirectional, 2 μs after P1). If P2 ≥ P1, aircraft is in sidelobe → no reply</li>
+        <li><span class="val">P3</span> — mode-defining pulse. Spacing from P1 determines mode:</li>
+        <li style="padding-left: 32px;"><span class="val-cyan">8 μs</span> = Mode A (identity/squawk)</li>
+        <li style="padding-left: 32px;"><span class="val-cyan">21 μs</span> = Mode C (altitude)</li>
+        <li><span class="val">P4</span> — Mode S control pulse:</li>
+        <li style="padding-left: 32px;"><span class="val-amber">0.8 μs</span> (short) = Mode A/C only reply, Mode S stays quiet</li>
+        <li style="padding-left: 32px;"><span class="val-amber">1.6 μs</span> (long) = Mode S replies with 24-bit address</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Modes Explained</div>
+      <ul>
+        <li><span class="val-cyan">Mode A</span> — aircraft identity. 4-digit octal squawk code (0–7 per digit = 4096 codes)</li>
+        <li><span class="val-cyan">Mode C</span> — pressure altitude in 100 ft increments from encoding altimeter</li>
+        <li><span class="val-cyan">Mode S</span> — Selective interrogation. Each aircraft has unique <span class="val">24-bit address</span> (16.7 million unique codes). Enables private ground-to-air data link</li>
+      </ul>
+      <p style="margin-top: 8px; color: var(--white-dim);">Ground station alternates Mode A and C interrogations rapidly (~1200/sec). Processor combines all replies into one unified display for controller.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Mode S Operation</div>
+      <ul>
+        <li><span class="val">1. All-Call</span> — ground sends P4 long (1.6 μs), all transponders reply. Mode S aircraft reply with 24-bit address. Ground "discovers" new aircraft.</li>
+        <li><span class="val">2. Lockout</span> — known Mode S aircraft told to stop replying to all-calls. 18-second lockout timer. Reduces congestion.</li>
+        <li><span class="val">3. Roll-Call</span> — ground selectively interrogates individual aircraft by their 24-bit address. Private conversation, no interference.</li>
+      </ul>
+      <div class="tip-box">
+        <div class="label">Mode S = S for Selective</div>
+        Like a teacher taking attendance once (all-call), then asking individual students by name (roll-call)
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Transponder Control Panel</div>
+      <table class="comp-table">
+        <tr><th>Position</th><th>Modes Active</th></tr>
+        <tr><td>OFF</td><td>None</td></tr>
+        <tr><td>STBY</td><td>None (warming up)</td></tr>
+        <tr><td>ON</td><td><span class="val">A + S</span> only</td></tr>
+        <tr><td>ALT</td><td><span class="val-green">A + C + S</span> (full)</td></tr>
+      </table>
+      <ul style="margin-top: 10px;">
+        <li>Squawk codes: <span class="val">octal digits 0–7</span> (not 0–9!)</li>
+        <li>24-bit Mode S address: <span class="val">hardcoded</span> at installation, not manually entered</li>
+        <li>SPI (Ident) pulse: added for <span class="val">18 ± 1 seconds</span> when pilot presses IDENT</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GNSS ===== -->
+<div id="gnss" class="tab-content">
+  <div class="section-title">
+    <span class="icon">🛰️</span> GNSS
+    <span class="freq-badge">UHF/L-Band · L1: 1575.42 MHz</span>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Global Systems (4 Operational)</div>
+      <table class="comp-table">
+        <tr><th>System</th><th>Country</th><th>Satellites</th><th>Orbits</th><th>Altitude</th><th>Inclination</th><th>Control</th></tr>
+        <tr><td><span class="val-cyan">GPS/NAVSTAR</span></td><td>USA</td><td>24 (31 active)</td><td>6</td><td>20,180 km</td><td>55°</td><td>Military</td></tr>
+        <tr><td><span class="val-cyan">GLONASS</span></td><td>Russia</td><td>24</td><td>3</td><td>19,099 km</td><td>64.8°</td><td>Military</td></tr>
+        <tr><td><span class="val-cyan">Galileo</span></td><td>EU</td><td>30</td><td>3</td><td>23,222 km</td><td>56°</td><td>Civilian</td></tr>
+        <tr><td><span class="val-cyan">BeiDou</span></td><td>China</td><td>30+</td><td>3</td><td>21,528 km</td><td>55°</td><td>Military</td></tr>
+      </table>
+      <p style="margin-top: 8px; color: var(--white-dim);">Regional: NavIC (India), QZSS (Japan). All MEO orbits, NOT geostationary. ~12hr orbital period. Galileo = only civilian-controlled system. GLONASS highest inclination = best polar coverage. GPS & GLONASS are interoperable with multi-GNSS receiver but do NOT share satellites.</p>
+      <div class="tip-box">
+        <div class="label">GPS vs GLONASS Differences</div>
+        Different frequencies, signal encoding (GPS=CDMA, GLONASS=FDMA), datum (GPS=WGS-84, GLONASS=PZ-90), time reference. But interoperable — a suitably equipped aircraft can use both simultaneously.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>How GPS Works</div>
+      <ul>
+        <li>Each satellite broadcasts unique PRN code with precise timestamp (<span class="val">atomic clock</span>)</li>
+        <li>Receiver compares sent time vs received time</li>
+        <li>Time difference × speed of light = <span class="val">pseudo-range</span> (includes clock error, hence "pseudo")</li>
+        <li>4th satellite needed to solve <span class="val">receiver clock error</span></li>
+        <li>GPS is <span class="val-green">one-way, passive</span> — receiver only listens, never transmits. Unlimited users.</li>
+        <li>Position = <span class="val">time measurement</span>. Groundspeed = <span class="val">Doppler shift</span> of carrier frequency</li>
+      </ul>
+      <div class="formula-box">
+        <div class="label">Minimum Satellites Required</div>
+        3 SVs → 2D fix (lat/long only)<br>
+        4 SVs → 3D fix (lat/long/alt + clock)<br>
+        5 SVs → 3D + RAIM fault detection<br>
+        6 SVs → 3D + RAIM + FDE (fault detection & exclusion)
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>GPS Frequencies & Codes</div>
+      <ul>
+        <li><span class="val">L1: 1575.42 MHz</span> — primary civil signal</li>
+        <li><span class="val">L2: 1227.60 MHz</span> — military + civil</li>
+        <li><span class="val">L5: 1176.45 MHz</span> — newer, more robust</li>
+        <li>All in <span class="val-cyan">UHF / L-band</span> range</li>
+      </ul>
+      <table class="comp-table" style="margin-top: 10px;">
+        <tr><th>Code</th><th>Users</th><th>Frequency</th><th>Service</th></tr>
+        <tr><td><span class="val">C/A Code</span></td><td>Civilian (everyone)</td><td>L1 only</td><td>SPS</td></tr>
+        <tr><td><span class="val">P(Y) Code</span></td><td>Military (encrypted)</td><td>L1 + L2</td><td>PPS</td></tr>
+      </table>
+      <div class="tip-box">
+        <div class="label">Dual Frequency Advantage</div>
+        Using both L1 and L2 eliminates <span class="val">ionospheric delay</span> only. Cannot fix tropospheric delay (same effect on all frequencies). Ionosphere = dispersive. Troposphere = non-dispersive.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>GPS Time & Navigation Message</div>
+      <p>Satellites use <span class="val-cyan">GPS Time</span> — independent time system, started Jan 6 1980, NO leap seconds (unlike UTC). Receiver converts to UTC using UTC parameters in nav message.</p>
+      <p style="margin-top: 8px;"><span class="val-cyan">Navigation message contains 6 items:</span></p>
+      <ul>
+        <li><span class="val">Almanac data</span> — rough position of ALL satellites</li>
+        <li><span class="val">Ephemeris</span> — precise position of transmitting satellite</li>
+        <li><span class="val">Satellite clock corrections</span> — fix timing drift</li>
+        <li><span class="val">UTC parameters</span> — convert GPS Time to UTC</li>
+        <li><span class="val">Ionospheric model</span> — signal delay corrections</li>
+        <li><span class="val">Satellite health data</span> — use/don't use status</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>GNSS Errors (UERE)</div>
+      <p><span class="val-cyan">UERE (User Equivalent Range Error)</span> = sum of ALL errors affecting pseudo-range:</p>
+      <ul>
+        <li><span class="val-red">Ionospheric delay</span> — greatest error source, signal slows through charged particles, varies signal path length</li>
+        <li><span class="val-red">Tropospheric delay</span> — signal slows through lower atmosphere</li>
+        <li><span class="val-red">Satellite clock error</span> — atomic clock drift</li>
+        <li><span class="val-red">Ephemeris error</span> — satellite not exactly where reported</li>
+        <li><span class="val-red">Multipath</span> — signal bounces off surfaces</li>
+        <li><span class="val-red">Receiver noise</span> — receiver hardware imprecision</li>
+      </ul>
+      <div class="formula-box">
+        <div class="label">Position Accuracy Formula</div>
+        Actual Position Error = UERE × GDOP<br><br>
+        UERE = all range measurement errors<br>
+        GDOP = geometry multiplier (NOT part of UERE)<br>
+        DOP amplifies or reduces UERE errors
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>GDOP — Dilution of Precision</div>
+      <p><span class="val-cyan">Best geometry:</span> 1 satellite directly overhead + 3 near horizon, 120° apart in azimuth. Maximum 3D volume = lowest DOP = best accuracy.</p>
+      <p style="margin-top: 8px;"><span class="val-cyan">DOP Family:</span></p>
+      <ul>
+        <li><span class="val">GDOP</span> — Geometric (position + time) — the complete picture</li>
+        <li><span class="val">PDOP</span> — Position (lat + long + alt)</li>
+        <li><span class="val">HDOP</span> — Horizontal (lat + long)</li>
+        <li><span class="val">VDOP</span> — Vertical (altitude)</li>
+        <li><span class="val">TDOP</span> — Time (clock)</li>
+      </ul>
+      <p style="margin-top: 8px; color: var(--white-dim);">Low DOP = good (satellites spread). High DOP = bad (satellites clustered). GPS coverage varies with time as satellites constantly move.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Augmentation Systems</div>
+      <table class="comp-table">
+        <tr><th>System</th><th>How it works</th><th>Range</th><th>Min Satellites</th></tr>
+        <tr><td><span class="val-cyan">SBAS</span></td><td>Corrections via geostationary satellite on L1</td><td>Continental</td><td>4</td></tr>
+        <tr><td><span class="val-cyan">GBAS</span></td><td>Corrections via VHF datalink from ground</td><td>20 NM (local)</td><td>4</td></tr>
+        <tr><td><span class="val-cyan">ABAS (RAIM)</span></td><td>Receiver cross-checks extra satellites</td><td>N/A (onboard)</td><td>5 (detect) / 6 (exclude)</td></tr>
+        <tr><td><span class="val-cyan">ABAS (AAIM)</span></td><td>Onboard sensors cross-check GPS (IRS, baro, VOR/DME)</td><td>N/A (onboard)</td><td>4</td></tr>
+      </table>
+      <div class="tip-box">
+        <div class="label">SBAS has 2 Elements, GNSS has 3 Segments</div>
+        Elements of SBAS = ground infrastructure + geostationary satellites (2)<br>
+        Segments of GNSS = ground + space + user (3)<br>
+        Elements ≠ Segments — watch the wording!
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>SBAS Detail (EGNOS/WAAS)</div>
+      <table class="comp-table">
+        <tr><th>SBAS</th><th>Region</th><th>Paired GNSS</th></tr>
+        <tr><td><span class="val">WAAS</span></td><td>USA</td><td>GPS</td></tr>
+        <tr><td><span class="val">EGNOS</span></td><td>Europe</td><td>GPS (+ Galileo V3)</td></tr>
+        <tr><td><span class="val">MSAS</span></td><td>Japan</td><td>GPS</td></tr>
+        <tr><td><span class="val">GAGAN</span></td><td>India</td><td>GPS</td></tr>
+        <tr><td><span class="val">SDCM</span></td><td>Russia</td><td>GLONASS</td></tr>
+      </table>
+      <p style="margin-top: 8px;"><span class="val-cyan">EGNOS broadcast contains:</span></p>
+      <ul>
+        <li><span class="val">Integrity message</span> — use/don't use for each GPS satellite (within 6 seconds)</li>
+        <li><span class="val">Wide area DGPS corrections</span> — clock, orbit, ephemeris fixes</li>
+        <li><span class="val">Ionospheric delay model</span> — delay correction for your location</li>
+        <li><span class="val">GEO satellite ephemeris/clock</span> — so GEO acts as bonus ranging satellite</li>
+      </ul>
+      <p style="margin-top: 8px; color: var(--white-dim);">No tropospheric corrections — receiver uses stored standard atmospheric model. SBAS satellites ARE geostationary (~35,786 km, over equator). Without SBAS: ~15m. With SBAS: ~1–3m.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>RAIM — Receiver Autonomous Integrity Monitoring</div>
+      <ul>
+        <li><span class="val">R</span>eceiver — happens in YOUR aircraft GPS receiver</li>
+        <li><span class="val">A</span>utonomous — does it BY ITSELF, no external help</li>
+        <li><span class="val">I</span>ntegrity — checks if GPS data is TRUSTWORTHY</li>
+        <li><span class="val">M</span>onitoring — constantly watching</li>
+      </ul>
+      <p style="margin-top: 8px;">Uses <span class="val-cyan">redundant measurements</span> from extra moving GNSS satellites (NOT geostationary). Calculates position using different combinations and checks if answers agree.</p>
+      <ul>
+        <li><span class="val">5 SVs</span> — can detect fault but NOT identify which satellite</li>
+        <li><span class="val">6 SVs</span> — can detect AND exclude the faulty satellite</li>
+      </ul>
+      <div class="warn-box">
+        RAIM always involves the aircraft receiver using extra satellites. Any exam answer mentioning ground stations, satellite self-checks, or PRN codes is WRONG.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>GBAS / GLS Approaches</div>
+      <ul>
+        <li><span class="val-cyan">GBAS</span> = the system. <span class="val-cyan">GLS</span> = the approach procedure (like ILS = system, ILS approach = procedure)</li>
+        <li>Tuned via <span class="val">5-digit channel number</span> (not frequency)</li>
+        <li>Corrections via <span class="val">VHF datalink (VDB)</span></li>
+        <li>Aircraft needs GBAS-capable receiver (MMR)</li>
+        <li>FAS data block defines approach path: threshold position, course, glidepath angle, crossing height</li>
+        <li>Provides lateral AND vertical guidance</li>
+        <li>Currently supports down to <span class="val">200 ft</span> minimums (CAT I equivalent)</li>
+        <li>More precise than ILS in terminal area — sub-1m accuracy everywhere within coverage</li>
+      </ul>
+      <div class="formula-box">
+        <div class="label">GBAS/GLS Coverage</div>
+        ±10° either side → 20 NM<br>
+        ±35° either side → 15 NM
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>GNSS Approach Hierarchy</div>
+      <table class="comp-table">
+        <tr><th>Approach</th><th>Requires</th><th>Guidance</th><th>Minimums</th></tr>
+        <tr><td><span class="val">LNAV</span></td><td>GPS + RAIM</td><td>Lateral only</td><td>Highest (non-precision)</td></tr>
+        <tr><td><span class="val">LNAV/VNAV</span></td><td>GPS + RAIM (or baro VNAV)</td><td>Lateral + baro vertical</td><td>Medium</td></tr>
+        <tr><td><span class="val-green">LPV</span></td><td>GPS + <span class="val-cyan">SBAS (EGNOS)</span></td><td>Lateral + satellite vertical</td><td>200 ft DH (≈ CAT I)</td></tr>
+        <tr><td><span class="val-green">GLS</span></td><td>GPS + <span class="val-cyan">GBAS</span></td><td>Lateral + vertical (precision)</td><td>200 ft → CAT II/III future</td></tr>
+      </table>
+      <div class="tip-box">
+        <div class="label">EGNOS NOTAM — No EGNOS Available</div>
+        EGNOS down → check RAIM → drop from LPV to LNAV/VNAV. GPS still works, just without SBAS corrections. Can't enter SBAS channel number → receiver doesn't support SBAS → use non-augmented GNSS minima.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Position Fix Types</div>
+      <div class="qcode-grid">
+        <div class="qcode-item"><div class="code" style="font-size: 0.8rem;">Rho-Theta</div><div class="desc">Distance + Bearing<br>(VOR/DME)</div></div>
+        <div class="qcode-item"><div class="code" style="font-size: 0.8rem;">Rho-Rho</div><div class="desc">Distance + Distance<br>(DME/DME)</div></div>
+        <div class="qcode-item"><div class="code" style="font-size: 0.8rem;">Theta-Theta</div><div class="desc">Bearing + Bearing<br>(VOR/VOR)</div></div>
+        <div class="qcode-item"><div class="code" style="font-size: 0.8rem;">Rho-Rho-Rho</div><div class="desc">3× Distance<br>(GNSS trilateration)</div></div>
+      </div>
+      <p style="margin-top: 8px; color: var(--white-dim);">VHF NAV band split: <span class="val">108–112 MHz</span> = terminal VORs · <span class="val">112–117.95 MHz</span> = en-route VORs</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PBN ===== -->
+<div id="pbn" class="tab-content">
+  <div class="section-title">
+    <span class="icon">🧭</span> PBN — Performance Based Navigation
+    <span class="freq-badge">RNAV + RNP Specifications</span>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>What is PBN?</div>
+      <p>PBN is the <span class="val-cyan">umbrella framework</span> for defining navigation requirements based on <span class="val">performance</span> (how accurate) rather than <span class="val">equipment</span> (what specific box).</p>
+      <p style="margin-top: 8px;"><span class="val-red">PBN is NOT sensor-specific.</span> It doesn't care what equipment you use — only that you meet the accuracy requirement.</p>
+      <ul style="margin-top: 8px;">
+        <li>Old way: "You MUST have a VOR receiver"</li>
+        <li>PBN way: "You must be accurate to within X NM — we don't care how"</li>
+      </ul>
+      <p style="margin-top: 10px; color: var(--white-dim);">PBN has two families: RNAV and RNP</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>RNAV vs RNP</div>
+      <table class="comp-table">
+        <tr><th>Feature</th><th>RNAV</th><th>RNP</th></tr>
+        <tr><td>Accuracy requirement</td><td><span class="val-green">Yes</span></td><td><span class="val-green">Yes</span></td></tr>
+        <tr><td>Performance monitoring</td><td><span class="val-red">No</span></td><td><span class="val-green">Yes</span></td></tr>
+        <tr><td>Alerting if degraded</td><td><span class="val-red">No</span></td><td><span class="val-green">Yes</span></td></tr>
+        <tr><td>Sensors</td><td>GNSS, DME/DME, VOR/DME, IRS</td><td>Primarily GNSS (RAIM)</td></tr>
+        <tr><td>Manual waypoint entry</td><td>RNAV 5 only</td><td>Never</td></tr>
+      </table>
+      <div class="tip-box">
+        <div class="label">Analogy</div>
+        RNAV = stay in your lane (accuracy), no lane departure warning<br>
+        RNP = stay in your lane AND car beeps if you drift (monitoring + alerting)
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Navigation Specifications</div>
+      <table class="comp-table">
+        <tr><th>Spec</th><th>Accuracy</th><th>Phase of Flight</th></tr>
+        <tr><td><span class="val">RNAV 10</span></td><td>10 NM</td><td>Oceanic</td></tr>
+        <tr><td><span class="val">RNAV 5</span></td><td>5 NM</td><td>En-route</td></tr>
+        <tr><td><span class="val">RNAV 2</span></td><td>2 NM</td><td>En-route / Terminal</td></tr>
+        <tr><td><span class="val">RNAV 1</span></td><td>1 NM</td><td>Terminal (SID/STAR)</td></tr>
+        <tr><td><span class="val-cyan">RNP 4</span></td><td>4 NM</td><td>Oceanic</td></tr>
+        <tr><td><span class="val-cyan">RNP 2</span></td><td>2 NM</td><td>En-route</td></tr>
+        <tr><td><span class="val-cyan">RNP 1</span></td><td>1 NM</td><td>Terminal (SID/STAR)</td></tr>
+        <tr><td><span class="val-cyan">RNP APCH</span></td><td>Varies</td><td>Approach</td></tr>
+        <tr><td><span class="val-cyan">RNP AR</span></td><td>0.1–0.3 NM</td><td>Approach (Authorization Required)</td></tr>
+        <tr><td><span class="val-green">A-RNP</span></td><td>Covers all above</td><td>All phases (except RNP AR)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>A-RNP — The Premium Package</div>
+      <p>If certified for A-RNP, you automatically meet ALL of these:</p>
+      <div class="formula-box">
+        <div class="label">Memory Code: 52121 APCH</div>
+        RNAV 5 · RNAV 2 · RNAV 1<br>
+        RNP 2 · RNP 1 · RNP APCH<br><br>
+        Does NOT include RNP AR (needs separate authorization)
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>TSE — Total System Error</div>
+      <div class="formula-box">
+        <div class="label">TSE Formula</div>
+        TSE = PDE + NSE + FTE<br><br>
+        TSE (EPE) must be ≤ required nav spec
+      </div>
+      <ul style="margin-top: 10px;">
+        <li><span class="val-cyan">PDE</span> (Path Definition Error) — database path vs desired path don't match. <span class="val-green">Assumed ZERO</span></li>
+        <li><span class="val-cyan">NSE</span> (Navigation System Error) — difference between estimated and actual position (sensor errors)</li>
+        <li><span class="val-cyan">FTE</span> (Flight Technical Error) — crew/autopilot ability to follow track. Must not exceed <span class="val-red">HALF of RNP value</span></li>
+      </ul>
+      <div class="tip-box">
+        <div class="label">Since PDE = 0</div>
+        TSE = NSE + FTE in practice<br>
+        Example RNP 1: FTE must not exceed 0.5 NM
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Guidance Types</div>
+      <table class="comp-table">
+        <tr><th>Type</th><th>How it works</th><th>Where used</th></tr>
+        <tr><td><span class="val-cyan">Linear</span></td><td>Fixed distance off track (e.g. 0.5 NM is 0.5 NM everywhere)</td><td>En-route, terminal</td></tr>
+        <tr><td><span class="val-cyan">Angular</span></td><td>Degrees off course (actual distance varies with range from reference)</td><td>Final approach (ILS-like)</td></tr>
+      </table>
+      <p style="margin-top: 8px; color: var(--white-dim);">En-route = linear only. Approach phase accommodates <span class="val">both</span> linear and angular guidance (transition from en-route to final approach).</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>RNP APCH — Approach Minima Hierarchy</div>
+      <table class="comp-table">
+        <tr><th>Minima</th><th>Requires</th><th>Vertical Source</th><th>Dimension</th></tr>
+        <tr><td><span class="val">LNAV</span></td><td>GNSS + RAIM</td><td>None (step-down)</td><td>2D</td></tr>
+        <tr><td><span class="val">LNAV/VNAV</span></td><td>GNSS + baro-VNAV or SBAS</td><td>Baro-VNAV or SBAS</td><td>3D</td></tr>
+        <tr><td><span class="val">LP</span></td><td>GNSS + SBAS</td><td>None (lateral precision only)</td><td>2D</td></tr>
+        <tr><td><span class="val-green">LPV</span></td><td>GNSS + SBAS + FAS data block</td><td>SBAS vertical</td><td>3D</td></tr>
+      </table>
+      <div class="warn-box">
+        LPV is the ONLY approach requiring the FAS Data Block. FAS defines the approach path mathematically (threshold position, course, glidepath angle, crossing height). GNSS only = LNAV minima.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>3D Approach Operations</div>
+      <p>3D = lateral guidance + vertical guidance. Must have BOTH to be 3D.</p>
+      <ul>
+        <li><span class="val-green">GNSS + baro-VNAV</span> → 3D ✅</li>
+        <li><span class="val-green">GLS (GBAS)</span> → 3D ✅</li>
+        <li><span class="val-green">ILS (LOC + GS)</span> → 3D ✅</li>
+        <li><span class="val-green">SBAS (LPV)</span> → 3D ✅</li>
+        <li><span class="val-red">RNP 1</span> → 2D ❌ (terminal nav spec, lateral only)</li>
+        <li><span class="val-red">LNAV only</span> → 2D ❌ (no vertical guidance)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Waypoint Types</div>
+      <table class="comp-table">
+        <tr><th>Type</th><th>What happens</th><th>When used</th></tr>
+        <tr><td><span class="val-cyan">Fly-by</span></td><td>Turn starts BEFORE waypoint, cuts corner smoothly</td><td>Most common, smoother path</td></tr>
+        <tr><td><span class="val-cyan">Fly-over</span></td><td>Must cross directly OVER waypoint, THEN turn</td><td>When must pass directly over a point</td></tr>
+        <tr><td><span class="val-cyan">FRT</span></td><td>Fixed Radius Transition — precise curved arc</td><td>En-route turns between airways</td></tr>
+        <tr><td><span class="val-cyan">RF</span></td><td>Radius to Fix — precise curved arc</td><td>Approach & departure (terminal)</td></tr>
+      </table>
+      <p style="margin-top: 8px; color: var(--white-dim);">Both fly-by and fly-over are compatible with RNAV and RNP. Pilot CANNOT change waypoint type — fixed in database by procedure designer. RF legs require autopilot or flight director (pilot cannot hand-fly a precise arc).</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Path Terminators</div>
+      <p>Define how one route segment <span class="val">ends</span> and the next <span class="val">begins</span>. Like punctuation in a sentence.</p>
+      <table class="comp-table">
+        <tr><th>Code</th><th>Name</th><th>Meaning</th></tr>
+        <tr><td><span class="val">TF</span></td><td>Track to Fix</td><td>Fly straight track to a waypoint (most common)</td></tr>
+        <tr><td><span class="val">DF</span></td><td>Direct to Fix</td><td>Fly direct from current position to waypoint</td></tr>
+        <tr><td><span class="val">CF</span></td><td>Course to Fix</td><td>Fly specific course to waypoint</td></tr>
+        <tr><td><span class="val">RF</span></td><td>Radius to Fix</td><td>Fly precise curved arc to waypoint</td></tr>
+        <tr><td><span class="val">IF</span></td><td>Initial Fix</td><td>Starting point of a procedure</td></tr>
+        <tr><td><span class="val">FA</span></td><td>Fix to Altitude</td><td>Fly from fix until reaching an altitude</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>RNAV SID vs Overlay SID</div>
+      <ul>
+        <li><span class="val-cyan">Conventional SID</span> — designed using ground navaids (VOR, NDB, DME). Route goes beacon to beacon.</li>
+        <li><span class="val-cyan">RNAV SID</span> — designed from scratch for RNAV/GPS. Waypoints anywhere, more efficient, shorter routes.</li>
+        <li><span class="val-cyan">RNAV Overlay SID</span> — takes existing conventional SID and allows RNAV aircraft to fly the <span class="val">SAME track</span> using FMS/GPS instead of tuning ground navaids. Same route, different navigation method.</li>
+      </ul>
+      <div class="tip-box">
+        <div class="label">Overlay = Bridge Solution</div>
+        Old aircraft follow VORs. RNAV aircraft follow FMS. Same track, same separation, everyone coexists. Eventually replaced by proper RNAV SIDs.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Parallel Offset & Database Rules</div>
+      <ul>
+        <li><span class="val-cyan">Parallel offset</span> — fly parallel to airway at fixed distance. If aircraft turns more than <span class="val-red">90°</span>, RNAV system automatically <span class="val-red">discontinues the offset</span></li>
+        <li><span class="val-cyan">Missing waypoint in database</span> — for anything tighter than RNAV 5, you CANNOT manually create it. Must request alternative procedure from ATC.</li>
+        <li><span class="val-cyan">Route modification</span> — pilots can insert/delete waypoints from the <span class="val">active flight plan</span> per ATC clearance. NEVER modify the navigation database itself.</li>
+        <li><span class="val-cyan">Manual waypoint entry</span> — allowed ONLY for <span class="val">RNAV 5</span>. All tighter specs require validated database waypoints.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Baro-VNAV & IRS Alignment</div>
+      <ul>
+        <li><span class="val-cyan">Baro-VNAV approach</span> — uses barometric altimeter for vertical guidance = 3D approach. Crew must cross-check both pilots' barometric altimeters agree before approach.</li>
+        <li><span class="val-cyan">IRS alignment</span> — approximately <span class="val">10 minutes</span> at mid latitudes. Faster at equator (stronger horizontal rotation component). Slower/impossible at poles.</li>
+        <li><span class="val-cyan">IRS capability time</span> — can be extended by <span class="val">updating</span> with external position data (GNSS, VOR/DME fixes). Resets the drift.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FREQUENCIES ===== -->
+<div id="freq" class="tab-content">
+  <div class="section-title">
+    <span class="icon">📊</span> Frequency Bands & Systems
+  </div>
+
+  <div class="cards-grid">
+    <div class="card card-full">
+      <div class="card-title"><span class="dot"></span>Radio Frequency Bands</div>
+      <table class="comp-table">
+        <tr><th>Band</th><th>Range</th><th>Aviation Systems</th></tr>
+        <tr><td><span class="val">VLF</span></td><td>3–30 kHz</td><td>Omega (obsolete)</td></tr>
+        <tr><td><span class="val">LF</span></td><td>30–300 kHz</td><td>NDB</td></tr>
+        <tr><td><span class="val">MF</span></td><td>300–3000 kHz</td><td>NDB, broadcast</td></tr>
+        <tr><td><span class="val">HF</span></td><td>3–30 MHz</td><td>Long range communications</td></tr>
+        <tr><td><span class="val-cyan">VHF</span></td><td>30–300 MHz</td><td>VHF COM, VDF, VOR, ILS Localizer, Marker beacons (75 MHz)</td></tr>
+        <tr><td><span class="val-cyan">UHF</span></td><td>300–3000 MHz</td><td>ILS Glideslope, DME, SSR, GNSS, Satellite comms</td></tr>
+        <tr><td><span class="val-cyan">SHF</span></td><td>3–30 GHz</td><td>RADALT, AWR, MLS, Short range radars</td></tr>
+        <tr><td><span class="val">EHF</span></td><td>30–300 GHz</td><td>Future applications</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>System Frequencies</div>
+      <table class="comp-table">
+        <tr><th>System</th><th>Frequency</th><th>Band</th></tr>
+        <tr><td>NDB</td><td class="val">190–1750 kHz</td><td>LF/MF</td></tr>
+        <tr><td>VOR</td><td class="val">108–117.95 MHz</td><td>VHF</td></tr>
+        <tr><td>ILS LOC</td><td class="val">108–111.975 MHz</td><td>VHF</td></tr>
+        <tr><td>ILS GP</td><td class="val">329.15–335 MHz</td><td>UHF</td></tr>
+        <tr><td>Markers</td><td class="val">75 MHz</td><td>VHF</td></tr>
+        <tr><td>DME</td><td class="val">960–1215 MHz</td><td>UHF</td></tr>
+        <tr><td>SSR Interr.</td><td class="val">1030 MHz</td><td>UHF</td></tr>
+        <tr><td>SSR Reply</td><td class="val">1090 MHz</td><td>UHF</td></tr>
+        <tr><td>GPS L1</td><td class="val">1575.42 MHz</td><td>UHF/L</td></tr>
+        <tr><td>MLS</td><td class="val">5031–5091 MHz</td><td>SHF</td></tr>
+        <tr><td>AWR</td><td class="val">9375 MHz</td><td>SHF</td></tr>
+        <tr><td>RADALT</td><td class="val">4200–4400 MHz</td><td>SHF</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Modulation Types</div>
+      <table class="comp-table">
+        <tr><th>Type</th><th>Systems</th></tr>
+        <tr><td><span class="val-cyan">Pulse</span></td><td>Primary Radar, SSR, DME, AWR</td></tr>
+        <tr><td><span class="val-cyan">Phase</span></td><td>MLS, GPS</td></tr>
+        <tr><td><span class="val-cyan">Amplitude (AM)</span></td><td>VHF/HF COM, ADF, VOR, ILS</td></tr>
+        <tr><td><span class="val-cyan">Frequency (FM)</span></td><td>Sound broadcasting, VOR ref signal (9960 Hz subcarrier)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Wave Propagation Errors</div>
+      <table class="comp-table">
+        <tr><th>Effect</th><th>Meaning</th><th>System Affected</th></tr>
+        <tr><td><span class="val-red">Diffraction</span></td><td>Wave bends around obstacles</td><td>NDB (mountain effect)</td></tr>
+        <tr><td><span class="val-red">Reflection</span></td><td>Wave bounces off obstacles</td><td>VOR (mountain effect)</td></tr>
+        <tr><td><span class="val-red">Refraction</span></td><td>Wave changes speed → direction</td><td>NDB (coastal effect)</td></tr>
+        <tr><td><span class="val-red">Absorption</span></td><td>Wave loses energy to terrain</td><td>NDB (reduces range)</td></tr>
+      </table>
+      <div class="tip-box">
+        <div class="label">AWR Gain Control</div>
+        Adjusts sensitivity of the radar receiver — how much return signal is needed before it appears on display. High gain = shows everything. Low gain = only strong returns.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 200, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
