@@ -30,6 +30,10 @@
 
 * { margin:0; padding:0; box-sizing:border-box; }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
@@ -100,6 +104,8 @@ body {
   transition: all 0.2s;
   letter-spacing: 1px;
   text-transform: uppercase;
+  text-decoration: none;
+  display: inline-block;
 }
 .nav-btn:hover, .nav-btn.active {
   background: var(--cyan-glow);
@@ -111,6 +117,7 @@ body {
 /* SECTIONS */
 .section {
   margin-bottom: 48px;
+  scroll-margin-top: 20px;
 }
 .section-title {
   font-family: 'Orbitron', sans-serif;
@@ -362,20 +369,20 @@ body {
   </div>
 
   <div class="nav-bar">
-    <span class="nav-btn active">Controls & Surfaces</span>
-    <span class="nav-btn">Pressure & Stall</span>
-    <span class="nav-btn">Angles & Forces</span>
-    <span class="nav-btn">Formulas</span>
-    <span class="nav-btn">Stability</span>
-    <span class="nav-btn">Propellers</span>
-    <span class="nav-btn">Turns</span>
-    <span class="nav-btn">Load Factors</span>
-    <span class="nav-btn">Engine Failure</span>
+    <a href="#controls" class="nav-btn">Controls &amp; Surfaces</a>
+    <a href="#pressure" class="nav-btn">Pressure &amp; Stall</a>
+    <a href="#angles" class="nav-btn">Angles &amp; Forces</a>
+    <a href="#formulas" class="nav-btn">Formulas</a>
+    <a href="#stability" class="nav-btn">Stability</a>
+    <a href="#props" class="nav-btn">Propellers</a>
+    <a href="#turns" class="nav-btn">Turns</a>
+    <a href="#loads" class="nav-btn">Load Factors</a>
+    <a href="#engfail" class="nav-btn">Engine Failure</a>
   </div>
 
 <!-- ===================== SECTION 1: CONTROLS ===================== -->
 <div class="section" id="controls">
-  <div class="section-title"><span class="num">01</span> Controls & Surfaces</div>
+  <div class="section-title"><span class="num">01</span> Controls &amp; Surfaces</div>
 
   <div class="card-grid">
     <div class="card">
@@ -435,7 +442,7 @@ body {
 
 <!-- ===================== SECTION 2: PRESSURE & STALL ===================== -->
 <div class="section" id="pressure">
-  <div class="section-title"><span class="num">02</span> Pressure Distribution & Stall</div>
+  <div class="section-title"><span class="num">02</span> Pressure Distribution &amp; Stall</div>
 
   <div class="card-grid">
     <div class="card">
@@ -475,7 +482,7 @@ body {
 
 <!-- ===================== SECTION 3: ANGLES & FORCES ===================== -->
 <div class="section" id="angles">
-  <div class="section-title"><span class="num">03</span> Angles, Axes & Forces</div>
+  <div class="section-title"><span class="num">03</span> Angles, Axes &amp; Forces</div>
 
   <div class="card-grid">
     <div class="card">
@@ -491,7 +498,7 @@ body {
     </div>
 
     <div class="card amber">
-      <div class="card-title">Moments & Axes</div>
+      <div class="card-title">Moments &amp; Axes</div>
       <table class="data-table">
         <tr><th>Moment</th><th>Symbol</th><th>Axis</th><th>Positive</th></tr>
         <tr><td>Pitching</td><td><span class="val">M / C<sub>M</sub></span></td><td>Lateral</td><td>Nose up</td></tr>
@@ -519,11 +526,11 @@ body {
   <div class="full-card">
     <div class="card-title" style="color:var(--cyan);">Absolute Angle of Attack</div>
     <p>Measured from the <span class="cval">zero lift line</span> (not chord line). At α<sub>a</sub> = 0°, lift = 0. The CL vs α<sub>a</sub> graph passes through the origin for ALL aerofoils regardless of camber. Used for stability analysis because it standardises the reference.</p>
-    <p style="margin-top:6px;">For a positively cambered wing: <span class="val">α<sub>a</sub> > α</span> (zero lift line is above chord line).</p>
+    <p style="margin-top:6px;">For a positively cambered wing: <span class="val">α<sub>a</sub> &gt; α</span> (zero lift line is above chord line).</p>
   </div>
 
   <div class="full-card">
-    <div class="card-title" style="color:var(--amber);">Thrust Line & Pitching Moments</div>
+    <div class="card-title" style="color:var(--amber);">Thrust Line &amp; Pitching Moments</div>
     <p>Propeller ahead of CG + aircraft inclined to airstream → thrust line above CG → <span class="rval">pitch-up moment</span> → <span class="rval">destabilising</span> (reinforces the disturbance).</p>
     <p style="margin-top:8px;"><span class="tag-label tag-cyan">Engines below CG</span> Increase thrust → nose-up pitch. <span class="tag-label tag-amber">Engines above CG</span> Increase thrust → nose-down pitch. <span class="tag-label tag-red">Engines at CG</span> No pitching moment — worst case for throttle-only control.</p>
   </div>
@@ -624,7 +631,7 @@ body {
       </div>
       <div class="formula-box">
         <div class="eq">L = W / cos(φ)</div>
-        <div class="note">Lift in turn. DIVIDE by cos → lift > weight ✓</div>
+        <div class="note">Lift in turn. DIVIDE by cos → lift &gt; weight ✓</div>
       </div>
     </div>
 
@@ -646,11 +653,11 @@ body {
     <div class="two-col">
       <div>
         <span class="tag-label tag-green">Result should be BIGGER</span>
-        <p>Turn: Lift > Weight → <span class="val">L = W / cos(φ)</span> → dividing by <1 makes it bigger ✓</p>
+        <p>Turn: Lift &gt; Weight → <span class="val">L = W / cos(φ)</span> → dividing by &lt;1 makes it bigger ✓</p>
       </div>
       <div>
         <span class="tag-label tag-red">Result should be SMALLER</span>
-        <p>Glide: Lift < Weight → <span class="val">L = W × cos(γ)</span> → multiplying by <1 makes it smaller ✓</p>
+        <p>Glide: Lift &lt; Weight → <span class="val">L = W × cos(γ)</span> → multiplying by &lt;1 makes it smaller ✓</p>
       </div>
     </div>
   </div>
@@ -679,7 +686,7 @@ body {
     </div>
 
     <div class="card amber">
-      <div class="card-title">CG & Longitudinal Stability</div>
+      <div class="card-title">CG &amp; Longitudinal Stability</div>
       <p>CG must be <span class="gval">ahead of AC</span> for positive longitudinal static stability.</p>
       <p style="margin-top:8px;"><span class="cval">Forward CG:</span> longer arm to tail → stronger restoring moment → more stable, but more trim drag, higher stick forces.</p>
       <p><span class="val">Aft CG:</span> shorter arm to tail → weaker restoring moment → less stable, but more efficient (less trim drag).</p>
@@ -759,8 +766,8 @@ body {
     <div class="card amber">
       <div class="card-title">Torque at Constant RPM</div>
       <p>Constant RPM = no angular acceleration = <span class="cval">engine torque = propeller torque</span>.</p>
-      <p style="margin-top:8px;">But <span class="val">SHP > THP</span> — losses appear in power, not torque. Same torque, but some energy wasted as heat/slipstream swirl.</p>
-      <div class="key-point warn">Don't confuse torque balance (equal at constant RPM) with power efficiency (SHP > THP always).</div>
+      <p style="margin-top:8px;">But <span class="val">SHP &gt; THP</span> — losses appear in power, not torque. Same torque, but some energy wasted as heat/slipstream swirl.</p>
+      <div class="key-point warn">Don't confuse torque balance (equal at constant RPM) with power efficiency (SHP &gt; THP always).</div>
     </div>
   </div>
 
@@ -772,7 +779,7 @@ body {
     </div>
 
     <div class="card green">
-      <div class="card-title">Solidity & Blade Count</div>
+      <div class="card-title">Solidity &amp; Blade Count</div>
       <div class="formula-box">
         <div class="eq">Solidity = (Blades × blade area) / disc area</div>
       </div>
@@ -815,7 +822,7 @@ body {
 
   <div class="card-grid">
     <div class="card">
-      <div class="card-title">Load Factor & Stall Speed</div>
+      <div class="card-title">Load Factor &amp; Stall Speed</div>
       <table class="data-table">
         <tr><th>Bank (φ)</th><th>n = 1/cos(φ)</th><th>√n (stall factor)</th></tr>
         <tr><td>30°</td><td><span class="val">1.15g</span></td><td><span class="cval">1.07</span> (+7%)</td></tr>
@@ -866,7 +873,7 @@ body {
 
 <!-- ===================== SECTION 8: LOAD FACTORS ===================== -->
 <div class="section" id="loads">
-  <div class="section-title"><span class="num">08</span> Load Factors & V-n Diagram</div>
+  <div class="section-title"><span class="num">08</span> Load Factors &amp; V-n Diagram</div>
 
   <div class="card-grid">
     <div class="card">
@@ -909,7 +916,7 @@ body {
         <tr><td>V<sub>C</sub></td><td><span class="val">50</span></td></tr>
         <tr><td>V<sub>D</sub></td><td><span class="val">25</span></td></tr>
       </table>
-      <p style="margin-top:8px;">B > C > D (66 > 50 > 25). Higher speed = weaker assumed gust. These represent vertical gust velocity — how fast air moves upward/downward hitting the aircraft.</p>
+      <p style="margin-top:8px;">B &gt; C &gt; D (66 &gt; 50 &gt; 25). Higher speed = weaker assumed gust. These represent vertical gust velocity — how fast air moves upward/downward hitting the aircraft.</p>
       <p style="margin-top:8px;"><span class="cval">V<sub>RA</sub></span> (turbulence penetration speed) is the operational speed pilots fly in severe turbulence. V<sub>B</sub> is the design number engineers use. Fly V<sub>RA</sub>, not V<sub>B</sub>.</p>
     </div>
   </div>
@@ -938,7 +945,7 @@ body {
 
 <!-- ===================== SECTION 9: ENGINE FAILURE ===================== -->
 <div class="section" id="engfail">
-  <div class="section-title"><span class="num">09</span> Engine Failure & Asymmetric Flight</div>
+  <div class="section-title"><span class="num">09</span> Engine Failure &amp; Asymmetric Flight</div>
 
   <div class="card-grid">
     <div class="card red">
@@ -951,7 +958,7 @@ body {
     </div>
 
     <div class="card">
-      <div class="card-title">Sideslip & Speed — Rudder Authority</div>
+      <div class="card-title">Sideslip &amp; Speed — Rudder Authority</div>
       <p>As speed decreases with one engine out:</p>
       <p style="margin-top:8px;">
         <span class="val">1.</span> Asymmetric thrust moment stays roughly constant<br>
