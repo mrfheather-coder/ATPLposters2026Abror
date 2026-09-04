@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HPL Psychology - ATPL Study Poster</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=JetBrains+Mono:wght@300;400;500;600&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0e13;
+      --bg-secondary: #0d1117;
+      --bg-card: #111820;
+      --bg-card-hover: #161d27;
+      --cyan: #00f5ff;
+      --cyan-dim: #00b8c4;
+      --amber: #ffb000;
+      --amber-dim: #cc8800;
+      --green: #00ff88;
+      --green-dim: #00cc6a;
+      --red: #ff3366;
+      --red-dim: #cc2952;
+      --white: #e8eaed;
+      --gray: #8b949e;
+      --gray-dark: #484f58;
+      --border: #21262d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--white);
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(ellipse at 20% 20%, rgba(0, 245, 255, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(255, 176, 0, 0.03) 0%, transparent 50%),
+        linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    }
+
+    /* Scanline effect */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.1) 2px,
+        rgba(0, 0, 0, 0.1) 4px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cyan), var(--amber), var(--green));
+    }
+
+    .header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--white) 50%, var(--amber) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .header .subtitle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      color: var(--gray);
+      letter-spacing: 2px;
+    }
+
+    /* Grid Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+    }
+
+    @media (max-width: 1200px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 800px) {
+      .grid { grid-template-columns: 1fr; }
+      .header h1 { font-size: 2rem; }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .card.cyan { border-left: 4px solid var(--cyan); }
+    .card.amber { border-left: 4px solid var(--amber); }
+    .card.green { border-left: 4px solid var(--green); }
+    .card.red { border-left: 4px solid var(--red); }
+
+    .card.wide { grid-column: span 2; }
+    .card.full { grid-column: span 3; }
+
+    @media (max-width: 1200px) {
+      .card.full { grid-column: span 2; }
+    }
+
+    @media (max-width: 800px) {
+      .card.wide, .card.full { grid-column: span 1; }
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      border-radius: 8px;
+    }
+
+    .cyan .card-icon { background: rgba(0, 245, 255, 0.15); color: var(--cyan); }
+    .amber .card-icon { background: rgba(255, 176, 0, 0.15); color: var(--amber); }
+    .green .card-icon { background: rgba(0, 255, 136, 0.15); color: var(--green); }
+    .red .card-icon { background: rgba(255, 51, 102, 0.15); color: var(--red); }
+
+    .card-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .cyan .card-title { color: var(--cyan); }
+    .amber .card-title { color: var(--amber); }
+    .green .card-title { color: var(--green); }
+    .red .card-title { color: var(--red); }
+
+    /* Content Styles */
+    .definition {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      border-left: 3px solid var(--gray-dark);
+    }
+
+    .stages {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .stage {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+    }
+
+    .stage-num {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      min-width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+
+    .cyan .stage-num { background: var(--cyan); color: var(--bg-primary); }
+    .amber .stage-num { background: var(--amber); color: var(--bg-primary); }
+    .green .stage-num { background: var(--green); color: var(--bg-primary); }
+    .red .stage-num { background: var(--red); color: var(--bg-primary); }
+
+    .stage-content h4 {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 3px;
+    }
+
+    .stage-content p {
+      font-size: 0.85rem;
+      color: var(--gray);
+      line-height: 1.4;
+    }
+
+    .highlight {
+      color: var(--cyan);
+      font-weight: 500;
+    }
+
+    .highlight-amber { color: var(--amber); }
+    .highlight-green { color: var(--green); }
+    .highlight-red { color: var(--red); }
+
+    /* Table Styles */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .data-table th {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 10px 8px;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .cyan .data-table th { color: var(--cyan); }
+    .amber .data-table th { color: var(--amber); }
+    .green .data-table th { color: var(--green); }
+    .red .data-table th { color: var(--red); }
+
+    .data-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      color: var(--gray);
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .data-table td:first-child {
+      color: var(--white);
+      font-weight: 500;
+    }
+
+    /* Tag Styles */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+    }
+
+    .tag.cyan { border-color: var(--cyan-dim); color: var(--cyan); }
+    .tag.amber { border-color: var(--amber-dim); color: var(--amber); }
+    .tag.green { border-color: var(--green-dim); color: var(--green); }
+    .tag.red { border-color: var(--red-dim); color: var(--red); }
+
+    /* Comparison Grid */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .compare-item {
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      border-left: 3px solid var(--gray-dark);
+    }
+
+    .compare-item.good { border-left-color: var(--green); }
+    .compare-item.bad { border-left-color: var(--red); }
+
+    .compare-item h4 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+
+    .compare-item.good h4 { color: var(--green); }
+    .compare-item.bad h4 { color: var(--red); }
+
+    .compare-item p {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+
+    /* Flow Chart */
+    .flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+
+    .flow-item {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .flow-arrow {
+      color: var(--gray-dark);
+      font-size: 1.2rem;
+    }
+
+    .cyan .flow-item { background: rgba(0, 245, 255, 0.15); color: var(--cyan); border: 1px solid var(--cyan-dim); }
+    .amber .flow-item { background: rgba(255, 176, 0, 0.15); color: var(--amber); border: 1px solid var(--amber-dim); }
+    .green .flow-item { background: rgba(0, 255, 136, 0.15); color: var(--green); border: 1px solid var(--green-dim); }
+
+    /* Memory Box */
+    .memory-box {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.1) 0%, rgba(255, 176, 0, 0.1) 100%);
+      border: 1px dashed var(--cyan-dim);
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
+    .memory-box .label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+
+    .memory-box .content {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--white);
+    }
+
+    /* Curve Diagram */
+    .curve-container {
+      position: relative;
+      height: 150px;
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+
+    .curve-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .curve-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      fill: var(--gray);
+    }
+
+    .curve-label.axis {
+      fill: var(--white);
+      font-weight: 500;
+    }
+
+    /* Attitude Grid */
+    .attitude-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 1200px) {
+      .attitude-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .attitude-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .attitude-item {
+      text-align: center;
+      padding: 12px 8px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .attitude-item .emoji {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .attitude-item .name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .attitude-item .phrase {
+      font-size: 0.7rem;
+      color: var(--gray);
+      font-style: italic;
+    }
+
+    .attitude-item .antidote {
+      font-size: 0.65rem;
+      color: var(--green);
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer p {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--gray-dark);
+    }
+
+    /* Exam Tip */
+    .exam-tip {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(255, 51, 102, 0.1);
+      border: 1px solid var(--red-dim);
+      border-radius: 6px;
+      margin-top: 12px;
+    }
+
+    .exam-tip .icon {
+      color: var(--red);
+      font-size: 1rem;
+    }
+
+    .exam-tip .text {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+
+    .exam-tip .text strong {
+      color: var(--red);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>✈ HPL Psychology</h1>
+      <p class="subtitle">EASA ATPL // Human Performance & Limitations</p>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="grid">
+
+      <!-- GAS Model -->
+      <div class="card cyan">
+        <div class="card-header">
+          <div class="card-icon">⚡</div>
+          <h3 class="card-title">GAS - General Adaptation Syndrome</h3>
+        </div>
+        <p class="definition">Hans Selye's model of body's response to stressors</p>
+        <div class="stages">
+          <div class="stage">
+            <span class="stage-num">1</span>
+            <div class="stage-content">
+              <h4>Alarm</h4>
+              <p>Fight-or-flight • <span class="highlight">Adrenaline</span> released • ↑HR, ↑BP</p>
+            </div>
+          </div>
+          <div class="stage">
+            <span class="stage-num">2</span>
+            <div class="stage-content">
+              <h4>Resistance</h4>
+              <p><span class="highlight">Cortisol</span> released • Fats→Sugar • Sustained energy</p>
+            </div>
+          </div>
+          <div class="stage">
+            <span class="stage-num">3</span>
+            <div class="stage-content">
+              <h4>Exhaustion</h4>
+              <p>Resources depleted • Chronic stress damage • Breakdown</p>
+            </div>
+          </div>
+        </div>
+        <div class="exam-tip">
+          <span class="icon">⚠</span>
+          <span class="text"><strong>EXAM:</strong> Cortisol = Resistance phase (not Alarm!)</span>
+        </div>
+      </div>
+
+      <!-- Definitions -->
+      <div class="card amber">
+        <div class="card-header">
+          <div class="card-icon">📖</div>
+          <h3 class="card-title">Key Definitions</h3>
+        </div>
+        <table class="data-table">
+          <tr>
+            <td>Stress</td>
+            <td>Body's response to demands placed upon it</td>
+          </tr>
+          <tr>
+            <td>Arousal</td>
+            <td>Physiological readiness (CNS activation) — <span class="highlight-amber">PHYSICAL</span></td>
+          </tr>
+          <tr>
+            <td>Alertness</td>
+            <td>Mental readiness to respond — <span class="highlight-amber">MENTAL</span></td>
+          </tr>
+          <tr>
+            <td>Vigilance</td>
+            <td>Sustained attention over time (monitoring)</td>
+          </tr>
+        </table>
+        <div class="exam-tip">
+          <span class="icon">⚠</span>
+          <span class="text"><strong>TRAP:</strong> Arousal (physical) ≠ Alertness (mental)</span>
+        </div>
+      </div>
+
+      <!-- Stressor Types -->
+      <div class="card green">
+        <div class="card-header">
+          <div class="card-icon">📊</div>
+          <h3 class="card-title">Stressor Categories</h3>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Source</th>
+              <th>Examples</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Environmental</td>
+              <td>Physical surroundings</td>
+              <td>Noise, vibration, temp, hypoxia</td>
+            </tr>
+            <tr>
+              <td>Physiological</td>
+              <td>Inside body</td>
+              <td>Fatigue, hunger, illness</td>
+            </tr>
+            <tr>
+              <td>Psycho-social</td>
+              <td>Mind/life</td>
+              <td>Financial worry, relationships</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="exam-tip">
+          <span class="icon">⚠</span>
+          <span class="text"><strong>EXAM:</strong> Engine noise = Environmental (measurable). Work overload = Psychological (mental)</span>
+        </div>
+      </div>
+
+      <!-- Yerkes-Dodson Curve -->
+      <div class="card cyan wide">
+        <div class="card-header">
+          <div class="card-icon">📈</div>
+          <h3 class="card-title">Yerkes-Dodson Curve & Workload</h3>
+        </div>
+        <div class="curve-container">
+          <svg class="curve-svg" viewBox="0 0 400 120">
+            <!-- Axes -->
+            <line x1="50" y1="100" x2="380" y2="100" stroke="#484f58" stroke-width="2"/>
+            <line x1="50" y1="100" x2="50" y2="10" stroke="#484f58" stroke-width="2"/>
+            
+            <!-- Curve -->
+            <path d="M 60 95 Q 120 90, 150 60 Q 200 15, 220 15 Q 240 15, 290 60 Q 320 90, 380 95" 
+                  fill="none" stroke="url(#curveGradient)" stroke-width="3"/>
+            
+            <!-- Gradient -->
+            <defs>
+              <linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ff3366"/>
+                <stop offset="50%" stop-color="#00ff88"/>
+                <stop offset="100%" stop-color="#ff3366"/>
+              </linearGradient>
+            </defs>
+            
+            <!-- Labels -->
+            <text x="60" y="115" class="curve-label" font-size="10">UNDERLOAD</text>
+            <text x="195" y="115" class="curve-label" font-size="10">OPTIMAL</text>
+            <text x="320" y="115" class="curve-label" font-size="10">OVERLOAD</text>
+            
+            <!-- Axis labels -->
+            <text x="215" y="8" class="curve-label axis" font-size="11">★ Peak Performance</text>
+            <text x="20" y="60" class="curve-label axis" font-size="9" transform="rotate(-90, 20, 60)">PERFORMANCE</text>
+            <text x="390" y="105" class="curve-label axis" font-size="9">AROUSAL</text>
+            
+            <!-- Breaking point -->
+            <circle cx="290" cy="60" r="5" fill="#ff3366"/>
+            <text x="295" y="55" class="curve-label" font-size="9" fill="#ff3366">Breaking Point</text>
+          </svg>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-item bad">
+            <h4>Underload (Left Side)</h4>
+            <p>Boredom, hypovigilance, complacency. Familiar + easy = mistakes. "Familiarity breeds contempt"</p>
+          </div>
+          <div class="compare-item bad">
+            <h4>Overload (Right Side)</h4>
+            <p>Past breaking point → performance collapses, tunnel vision, auditory exclusion</p>
+          </div>
+        </div>
+        <div class="memory-box">
+          <div class="label">💡 MEMORY</div>
+          <div class="content">Breaking Point = threshold beyond which further stress → overload</div>
+        </div>
+      </div>
+
+      <!-- Processing -->
+      <div class="card amber">
+        <div class="card-header">
+          <div class="card-icon">🧠</div>
+          <h3 class="card-title">Information Processing</h3>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Direction</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Top-Down</td>
+              <td>Brain → Senses</td>
+              <td>Expectations shape perception, <span class="highlight-red">disguises inconsistencies</span></td>
+            </tr>
+            <tr>
+              <td>Bottom-Up</td>
+              <td>Senses → Brain</td>
+              <td>Raw facts drive perception, data-based</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="exam-tip">
+          <span class="icon">⚠</span>
+          <span class="text"><strong>DANGER:</strong> Top-down = see what you EXPECT, not what's there</span>
+        </div>
+      </div>
+
+      <!-- Learning Techniques -->
+      <div class="card green">
+        <div class="card-header">
+          <div class="card-icon">📚</div>
+          <h3 class="card-title">Learning Techniques</h3>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Mechanism</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Classical</td>
+              <td>Stimulus association (Pavlov)</td>
+              <td>Fire bell → automatic response</td>
+            </tr>
+            <tr>
+              <td>Operant</td>
+              <td>Consequences shape behavior (Skinner)</td>
+              <td>Good landing → praise → repeat</td>
+            </tr>
+            <tr>
+              <td>Cognitive</td>
+              <td>Thinking, analyzing, understanding</td>
+              <td>Understanding WHY procedure works</td>
+            </tr>
+            <tr>
+              <td>Repetition</td>
+              <td>Repeated practice</td>
+              <td>Drilling checklists</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="exam-tip">
+          <span class="icon">⚠</span>
+          <span class="text"><strong>EXAM:</strong> Operant = reinforcement. Classical = association (no reward needed)</span>
+        </div>
+      </div>
+
+      <!-- Skill Acquisition -->
+      <div class="card cyan">
+        <div class="card-header">
+          <div class="card-icon">🎯</div>
+          <h3 class="card-title">Anderson's Skill Acquisition</h3>
+        </div>
+        <div class="flow">
+          <span class="flow-item">COGNITIVE</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">ASSOCIATIVE</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">AUTOMATIC</span>
+        </div>
+        <div class="stages" style="margin-top: 15px;">
+          <div class="stage">
+            <span class="stage-num">C</span>
+            <div class="stage-content">
+              <h4>Cognitive</h4>
+              <p>Thinking hard, slow, effortful, full attention required</p>
+            </div>
+          </div>
+          <div class="stage">
+            <span class="stage-num">A</span>
+            <div class="stage-content">
+              <h4>Associative</h4>
+              <p>Linking actions, getting smoother, less errors</p>
+            </div>
+          </div>
+          <div class="stage">
+            <span class="stage-num">A</span>
+            <div class="stage-content">
+              <h4>Automatic</h4>
+              <p>Effortless, fast, can multitask, minimal attention</p>
+            </div>
+          </div>
+        </div>
+        <div class="memory-box">
+          <div class="label">💡 MEMORY</div>
+          <div class="content">CAA = Cognitive → Associative → Automatic (like Civil Aviation Authority!)</div>
+        </div>
+      </div>
+
+      <!-- Hazardous Attitudes -->
+      <div class="card red wide">
+        <div class="card-header">
+          <div class="card-icon">⚠️</div>
+          <h3 class="card-title">5 Hazardous Attitudes (ASMRI)</h3>
+        </div>
+        <div class="attitude-grid">
+          <div class="attitude-item">
+            <div class="emoji">😤</div>
+            <div class="name">ANTI-AUTHORITY</div>
+            <div class="phrase">"Don't tell me what to do!"</div>
+            <div class="antidote">↪ Follow the rules</div>
+          </div>
+          <div class="attitude-item">
+            <div class="emoji">😎</div>
+            <div class="name">MACHO</div>
+            <div class="phrase">"I can do it, watch this!"</div>
+            <div class="antidote">↪ Taking chances is foolish</div>
+          </div>
+          <div class="attitude-item">
+            <div class="emoji">🛡️</div>
+            <div class="name">INVULNERABILITY</div>
+            <div class="phrase">"It won't happen to me"</div>
+            <div class="antidote">↪ It COULD happen to me</div>
+          </div>
+          <div class="attitude-item">
+            <div class="emoji">🤷</div>
+            <div class="name">RESIGNATION</div>
+            <div class="phrase">"What's the point?"</div>
+            <div class="antidote">↪ I CAN make a difference</div>
+          </div>
+          <div class="attitude-item">
+            <div class="emoji">⚡</div>
+            <div class="name">IMPULSIVITY</div>
+            <div class="phrase">"Do something NOW!"</div>
+            <div class="antidote">↪ Think first</div>
+          </div>
+        </div>
+        <div class="exam-tip">
+          <span class="icon">⚠</span>
+          <span class="text"><strong>TRAP:</strong> Macho = showing off. Invulnerability = "I'm too good for bad things to happen"</span>
+        </div>
+      </div>
+
+      <!-- Error Types -->
+      <div class="card amber">
+        <div class="card-header">
+          <div class="card-icon">❌</div>
+          <h3 class="card-title">James Reason's Error Types</h3>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Intention</th>
+              <th>Action</th>
+              <th>What Happened</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Slip</td>
+              <td>✅ Correct</td>
+              <td>❌ Wrong</td>
+              <td>Did Y instead of X</td>
+            </tr>
+            <tr>
+              <td>Lapse</td>
+              <td>✅ Correct</td>
+              <td>⛔ None</td>
+              <td>Forgot to do it</td>
+            </tr>
+            <tr>
+              <td>Omission</td>
+              <td>⛔ None</td>
+              <td>⛔ None</td>
+              <td>Never knew to do it</td>
+            </tr>
+            <tr>
+              <td>Mistake</td>
+              <td>❌ Wrong</td>
+              <td>✅ Correct</td>
+              <td>Plan was flawed</td>
+            </tr>
+            <tr>
+              <td>Violation</td>
+              <td colspan="3">Deliberate rule-breaking</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Motor Programme Errors -->
+      <div class="card green">
+        <div class="card-header">
+          <div class="card-icon">🖐️</div>
+          <h3 class="card-title">Motor Programme Errors</h3>
+        </div>
+        <div class="stages">
+          <div class="stage">
+            <span class="stage-num">1</span>
+            <div class="stage-content">
+              <h4>Action Slip</h4>
+              <p>Wrong automatic action runs. Reaching for flaps → grab gear instead</p>
+            </div>
+          </div>
+          <div class="stage">
+            <span class="stage-num">2</span>
+            <div class="stage-content">
+              <h4>Environmental Capture</h4>
+              <p>Familiar environment triggers usual routine even when inappropriate. Always taxi Alpha → cleared Bravo → taxi Alpha anyway</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regression vs Reversion -->
+      <div class="card red">
+        <div class="card-header">
+          <div class="card-icon">🔙</div>
+          <h3 class="card-title">Regression vs Reversion</h3>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-item bad">
+            <h4>Regression</h4>
+            <p><strong>Goes back to:</strong> Old trained habits</p>
+            <p><strong>Example:</strong> Airbus pilot reverts to old Boeing procedures under stress</p>
+          </div>
+          <div class="compare-item bad">
+            <h4>Reversion</h4>
+            <p><strong>Goes back to:</strong> Raw instinct (untrained)</p>
+            <p><strong>Example:</strong> Pulling back in stall instead of pushing forward</p>
+          </div>
+        </div>
+        <div class="memory-box">
+          <div class="label">💡 MEMORY</div>
+          <div class="content">Regression = previous training | Reversion = primitive instincts 🦧</div>
+        </div>
+      </div>
+
+      <!-- Team Concepts -->
+      <div class="card cyan">
+        <div class="card-header">
+          <div class="card-icon">👥</div>
+          <h3 class="card-title">Team Dynamics</h3>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Term</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Synergy</td>
+              <td>1+1=3 — combined effort > individuals</td>
+            </tr>
+            <tr>
+              <td>Cooperation</td>
+              <td>Joint force — working together</td>
+            </tr>
+            <tr>
+              <td>Coaction</td>
+              <td>Each do their own thing</td>
+            </tr>
+            <tr>
+              <td>Cohesion</td>
+              <td>Team spirit — bonding</td>
+            </tr>
+            <tr>
+              <td>Groupthink</td>
+              <td>False agreement — no critical evaluation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Authority Gradient -->
+      <div class="card amber">
+        <div class="card-header">
+          <div class="card-icon">📐</div>
+          <h3 class="card-title">Authority Gradient Cockpits</h3>
+        </div>
+        <div class="stages">
+          <div class="stage">
+            <span class="stage-num">📈</span>
+            <div class="stage-content">
+              <h4>Autocratic (Steep)</h4>
+              <p>"Captain is God" — FO ignored, one-way communication</p>
+            </div>
+          </div>
+          <div class="stage">
+            <span class="stage-num">📉</span>
+            <div class="stage-content">
+              <h4>Laissez-Faire (Flat)</h4>
+              <p>"Whatever" — no leadership, confusion</p>
+            </div>
+          </div>
+          <div class="stage">
+            <span class="stage-num">✅</span>
+            <div class="stage-content">
+              <h4>Synergistic (Optimal)</h4>
+              <p>"Team but I lead" — open communication, captain decides</p>
+            </div>
+          </div>
+        </div>
+        <div class="exam-tip">
+          <span class="icon">⚠</span>
+          <span class="text"><strong>TRAP:</strong> Autocratic ≠ Authoritative. Autocratic = dictator, Authoritative = confident leader who listens</span>
+        </div>
+      </div>
+
+      <!-- Communication -->
+      <div class="card green">
+        <div class="card-header">
+          <div class="card-icon">💬</div>
+          <h3 class="card-title">Communication</h3>
+        </div>
+        <p class="definition">Communication uses mental resources → limits resources for other tasks</p>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Metacommunication</td>
+              <td>Beyond words: tone, body language, context</td>
+            </tr>
+            <tr>
+              <td>Cocktail Party Effect</td>
+              <td>Filter noise, focus on one source, catch important (name)</td>
+            </tr>
+            <tr>
+              <td>Under Stress</td>
+              <td><span class="highlight-red">Auditory discarded first</span> — may miss radio calls</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Coping -->
+      <div class="card cyan">
+        <div class="card-header">
+          <div class="card-icon">🛠️</div>
+          <h3 class="card-title">Coping Strategies</h3>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-item good">
+            <h4>Action Coping</h4>
+            <p><strong>When:</strong> Problem CAN be fixed</p>
+            <p><strong>What:</strong> Take action to solve it</p>
+          </div>
+          <div class="compare-item good">
+            <h4>Cognitive Coping</h4>
+            <p><strong>When:</strong> Problem CANNOT be changed</p>
+            <p><strong>What:</strong> Change how you think/feel about it</p>
+          </div>
+        </div>
+        <div class="exam-tip">
+          <span class="icon">⚠</span>
+          <span class="text"><strong>KEY:</strong> Can fix it → Action | Can't fix it → Cognitive</span>
+        </div>
+      </div>
+
+      <!-- Psychosomatic -->
+      <div class="card amber">
+        <div class="card-header">
+          <div class="card-icon">🔄</div>
+          <h3 class="card-title">Psychosomatic Response</h3>
+        </div>
+        <p class="definition">Psycho (mind) + Somatic (body) = Mental state causes physical response</p>
+        <div class="flow" style="margin-top: 15px;">
+          <span class="flow-item">STRESS (mind)</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">HORMONES (body)</span>
+        </div>
+        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--gray);">Examples: Stress → sweating, trembling, ↑HR, adrenaline release</p>
+      </div>
+
+      <!-- Decision Making -->
+      <div class="card green">
+        <div class="card-header">
+          <div class="card-icon">🎲</div>
+          <h3 class="card-title">Decision Making</h3>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-item bad">
+            <h4>Bad Decision</h4>
+            <p>Wrong choice from available options (WHAT was decided)</p>
+          </div>
+          <div class="compare-item bad">
+            <h4>Inappropriate Decision</h4>
+            <p>Wrong timing, context, or authority (WHEN/HOW/WHO decided)</p>
+          </div>
+        </div>
+        <div class="memory-box">
+          <div class="label">💡 DECIDE MODEL</div>
+          <div class="content">Detect → Estimate → Choose → Identify → Do → Evaluate</div>
+        </div>
+      </div>
+
+      <!-- Active vs Latent -->
+      <div class="card red">
+        <div class="card-header">
+          <div class="card-icon">🧀</div>
+          <h3 class="card-title">Active vs Latent Failures</h3>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-item bad">
+            <h4>Active Failure</h4>
+            <p><strong>Who:</strong> Frontline (pilot, controller)</p>
+            <p><strong>When:</strong> Immediate effect NOW</p>
+            <p><strong>Ex:</strong> Pilot sets wrong altitude</p>
+          </div>
+          <div class="compare-item bad">
+            <h4>Latent Failure</h4>
+            <p><strong>Who:</strong> Management, organization</p>
+            <p><strong>When:</strong> Hidden, dormant, delayed</p>
+            <p><strong>Ex:</strong> Cost cuts in training dept</p>
+          </div>
+        </div>
+        <div class="memory-box">
+          <div class="label">💡 SWISS CHEESE</div>
+          <div class="content">Latent = holes already in cheese | Active = lines up holes → accident</div>
+        </div>
+      </div>
+
+      <!-- LTM -->
+      <div class="card cyan">
+        <div class="card-header">
+          <div class="card-icon">💾</div>
+          <h3 class="card-title">Long-Term Memory</h3>
+        </div>
+        <p class="definition">Pre-activate knowledge to have it available when needed</p>
+        <div class="tags">
+          <span class="tag cyan">Briefings</span>
+          <span class="tag cyan">Mental rehearsal</span>
+          <span class="tag cyan">Review charts</span>
+          <span class="tag cyan">Checklists</span>
+          <span class="tag cyan">Discussion</span>
+          <span class="tag cyan">Practice</span>
+        </div>
+        <div class="exam-tip">
+          <span class="icon">⚠</span>
+          <span class="text"><strong>LTM:</strong> Unlimited capacity, but retrieval is NOT immediate (unlike working memory: ~7 items, limited)</span>
+        </div>
+      </div>
+
+      <!-- Social Factors -->
+      <div class="card amber">
+        <div class="card-header">
+          <div class="card-icon">🎭</div>
+          <h3 class="card-title">Social Factors</h3>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Factor</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Social Expectations</td>
+              <td>Behaviour changes based on role (Captain acts "captain-like")</td>
+            </tr>
+            <tr>
+              <td>Lack of Social Support</td>
+              <td>Decreases stress tolerance (smaller bucket)</td>
+            </tr>
+            <tr>
+              <td>Risky Shift</td>
+              <td>Groups tend to take MORE risks than individuals</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Conflict Resolution -->
+      <div class="card green">
+        <div class="card-header">
+          <div class="card-icon">🤝</div>
+          <h3 class="card-title">Conflict Resolution</h3>
+        </div>
+        <div class="stages">
+          <div class="stage">
+            <span class="stage-num">✅</span>
+            <div class="stage-content">
+              <h4>Seek Arbitration</h4>
+              <p>Neutral third party helps decide</p>
+            </div>
+          </div>
+          <div class="stage">
+            <span class="stage-num">✅</span>
+            <div class="stage-content">
+              <h4>Actively Listen</h4>
+              <p>Understand the other side</p>
+            </div>
+          </div>
+          <div class="stage">
+            <span class="stage-num">✅</span>
+            <div class="stage-content">
+              <h4>Recognise Early Signs</h4>
+              <p>Address conflict before it grows</p>
+            </div>
+          </div>
+          <div class="stage">
+            <span class="stage-num">❌</span>
+            <div class="stage-content">
+              <h4>Strongly Defend Position</h4>
+              <p>NOT resolution — escalates conflict!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>EASA ATPL // HPL Psychology // Good luck with your exams! ✈️</p>
+    </footer>
+  </div>
+</body>
+</html>

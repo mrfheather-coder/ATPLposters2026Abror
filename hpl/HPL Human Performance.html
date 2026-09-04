@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HPL - Human Performance & Limitations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0e13;
+            --bg-panel: #0d1117;
+            --bg-card: #151b23;
+            --border-subtle: #21262d;
+            --border-glow: #30363d;
+            --cyan: #00d4ff;
+            --cyan-dim: #00a0c4;
+            --amber: #ffaa00;
+            --amber-dim: #cc8800;
+            --green: #00ff88;
+            --green-dim: #00cc6a;
+            --red: #ff3355;
+            --red-dim: #cc2244;
+            --magenta: #ff00aa;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-dim: #484f58;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Scanline overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.1) 2px,
+                rgba(0, 0, 0, 0.1) 4px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* MURPHY'S LAW HEADER */
+        .murphy-header {
+            position: relative;
+            padding: 60px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, #1a0a0a 0%, var(--bg-dark) 100%);
+            border-bottom: 2px solid var(--red-dim);
+            overflow: hidden;
+        }
+
+        .murphy-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 50% 0%, rgba(255, 51, 85, 0.15) 0%, transparent 60%),
+                repeating-linear-gradient(90deg, transparent, transparent 100px, rgba(255, 51, 85, 0.03) 100px, rgba(255, 51, 85, 0.03) 101px);
+            pointer-events: none;
+        }
+
+        .warning-stripe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--amber) 0px,
+                var(--amber) 20px,
+                #111 20px,
+                #111 40px
+            );
+            animation: stripeMove 2s linear infinite;
+        }
+
+        @keyframes stripeMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 0; }
+        }
+
+        .murphy-law {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1.5rem, 5vw, 3.5rem);
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--red);
+            text-shadow: 
+                0 0 20px rgba(255, 51, 85, 0.8),
+                0 0 40px rgba(255, 51, 85, 0.6),
+                0 0 60px rgba(255, 51, 85, 0.4),
+                0 0 80px rgba(255, 51, 85, 0.2);
+            animation: textPulse 3s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes textPulse {
+            0%, 100% { 
+                text-shadow: 
+                    0 0 20px rgba(255, 51, 85, 0.8),
+                    0 0 40px rgba(255, 51, 85, 0.6),
+                    0 0 60px rgba(255, 51, 85, 0.4);
+            }
+            50% { 
+                text-shadow: 
+                    0 0 30px rgba(255, 51, 85, 1),
+                    0 0 60px rgba(255, 51, 85, 0.8),
+                    0 0 90px rgba(255, 51, 85, 0.6),
+                    0 0 120px rgba(255, 51, 85, 0.4);
+            }
+        }
+
+        .murphy-subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--amber);
+            margin-top: 15px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .title-section {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .main-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 700;
+            color: var(--cyan);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .main-subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            letter-spacing: 0.2em;
+        }
+
+        /* NAVIGATION TABS */
+        .nav-container {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 15px 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-tab {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 8px 16px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .nav-tab:hover {
+            border-color: var(--cyan-dim);
+            color: var(--cyan);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(180deg, var(--cyan-dim) 0%, transparent 100%);
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        /* MAIN CONTENT */
+        .content-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--cyan);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--cyan-dim);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-header::before {
+            content: '◆';
+            color: var(--cyan);
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* CARDS GRID */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            padding: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--cyan);
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--cyan-dim);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--amber);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* TABLES */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .data-table th {
+            background: var(--bg-panel);
+            color: var(--cyan);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 2px solid var(--cyan-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 500;
+        }
+
+        .data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        .data-table tr:hover td {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .highlight-cyan { color: var(--cyan); font-weight: 600; }
+        .highlight-amber { color: var(--amber); font-weight: 600; }
+        .highlight-green { color: var(--green); font-weight: 600; }
+        .highlight-red { color: var(--red); font-weight: 600; }
+
+        /* MEMORY HOOKS */
+        .memory-hook {
+            background: linear-gradient(135deg, rgba(255, 170, 0, 0.1) 0%, transparent 100%);
+            border-left: 3px solid var(--amber);
+            padding: 12px 15px;
+            margin-top: 15px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .memory-hook::before {
+            content: '💡 ';
+        }
+
+        /* KEY POINT BOXES */
+        .key-point {
+            background: rgba(0, 255, 136, 0.08);
+            border: 1px solid var(--green-dim);
+            padding: 12px 15px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+
+        .key-point.warning {
+            background: rgba(255, 51, 85, 0.08);
+            border-color: var(--red-dim);
+        }
+
+        /* FLOW DIAGRAMS */
+        .flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            background: var(--bg-panel);
+            margin: 15px 0;
+        }
+
+        .flow-item {
+            background: var(--bg-card);
+            border: 1px solid var(--cyan-dim);
+            padding: 10px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--cyan);
+            text-align: center;
+        }
+
+        .flow-arrow {
+            color: var(--amber);
+            font-size: 1.2rem;
+        }
+
+        /* VITAL SIGNS DISPLAY */
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .vital-box {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vital-box::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--green);
+        }
+
+        .vital-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .vital-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* TUC ALTITUDE DISPLAY */
+        .tuc-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .tuc-item {
+            background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+            border: 1px solid var(--border-subtle);
+            padding: 15px;
+            text-align: center;
+        }
+
+        .tuc-altitude {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--amber);
+        }
+
+        .tuc-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--cyan);
+            margin-top: 5px;
+        }
+
+        /* G-FORCE PROGRESSION */
+        .g-progression {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .g-stage {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: var(--bg-panel);
+            border-left: 4px solid var(--border-subtle);
+            transition: all 0.3s;
+        }
+
+        .g-stage:nth-child(1) { border-left-color: var(--amber); }
+        .g-stage:nth-child(2) { border-left-color: #888; }
+        .g-stage:nth-child(3) { border-left-color: #333; }
+        .g-stage:nth-child(4) { border-left-color: var(--red); }
+
+        .g-stage-num {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            width: 40px;
+            color: var(--cyan);
+        }
+
+        .g-stage-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .g-stage-desc {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        /* HYPOXIA TYPE CARDS */
+        .hypoxia-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .hypoxia-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            padding: 20px;
+            position: relative;
+        }
+
+        .hypoxia-card.hypoxic { border-top: 3px solid var(--cyan); }
+        .hypoxia-card.anaemic { border-top: 3px solid var(--red); }
+        .hypoxia-card.stagnant { border-top: 3px solid var(--amber); }
+        .hypoxia-card.histotoxic { border-top: 3px solid var(--magenta); }
+
+        .hypoxia-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .hypoxia-card.hypoxic .hypoxia-title { color: var(--cyan); }
+        .hypoxia-card.anaemic .hypoxia-title { color: var(--red); }
+        .hypoxia-card.stagnant .hypoxia-title { color: var(--amber); }
+        .hypoxia-card.histotoxic .hypoxia-title { color: var(--magenta); }
+
+        .hypoxia-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .hypoxia-causes {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        /* SHELL MODEL */
+        .shell-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            background: var(--bg-panel);
+        }
+
+        .shell-center {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, var(--cyan) 0%, var(--cyan-dim) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bg-dark);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .shell-components {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .shell-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            padding: 15px 25px;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .shell-letter {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--amber);
+        }
+
+        .shell-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        /* COMPETENCIES LIST */
+        .competencies-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
+        }
+
+        .competency-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--bg-panel);
+            padding: 15px;
+            border-left: 3px solid var(--green);
+        }
+
+        .competency-num {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--green);
+            width: 30px;
+        }
+
+        .competency-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* PRESBY COMPARISON */
+        .comparison-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .comparison-box {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            padding: 25px;
+        }
+
+        .comparison-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--cyan);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: 50px;
+        }
+
+        .footer-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .murphy-law {
+                font-size: 1.3rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tab {
+                font-size: 0.6rem;
+                padding: 6px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- MURPHY'S LAW HEADER -->
+    <header class="murphy-header">
+        <div class="warning-stripe"></div>
+        <h1 class="murphy-law">"Anything That Can Go Wrong, Will Go Wrong"</h1>
+        <p class="murphy-subtitle">Murphy's Law — The Foundation of Human Factors</p>
+    </header>
+
+    <!-- TITLE -->
+    <div class="title-section">
+        <h2 class="main-title">Human Performance & Limitations</h2>
+        <p class="main-subtitle">EASA ATPL Study Reference // HPL 040</p>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="nav-container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-section="safety">Safety Culture</button>
+            <button class="nav-tab" data-section="errors">Errors & Models</button>
+            <button class="nav-tab" data-section="hypoxia">Hypoxia & Oxygen</button>
+            <button class="nav-tab" data-section="vestibular">Vestibular</button>
+            <button class="nav-tab" data-section="vision">Vision</button>
+            <button class="nav-tab" data-section="physiology">Physiology</button>
+            <button class="nav-tab" data-section="sleep">Sleep & Fatigue</button>
+            <button class="nav-tab" data-section="limits">Time Limits</button>
+        </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <main class="content-container">
+        
+        <!-- SAFETY CULTURE SECTION -->
+        <section id="safety" class="section active">
+            <h3 class="section-header">Safety Culture & Competencies</h3>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <h4 class="card-title">Safety Culture Types</h4>
+                    <table class="data-table">
+                        <tr>
+                            <th>Culture</th>
+                            <th>Definition</th>
+                        </tr>
+                        <tr>
+                            <td class="highlight-green">Non-Punitive</td>
+                            <td>Errors not punished → encourages reporting</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-amber">Just Culture</td>
+                            <td>Honest errors forgiven, violations sanctioned</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-cyan">Learning Culture</td>
+                            <td>Everyone learns from mistakes of others</td>
+                        </tr>
+                    </table>
+                    <div class="memory-hook">
+                        Non-punitive = "No punishment for honest mistakes = people report them"
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">SHELL Model (Hawkins)</h4>
+                    <div class="shell-diagram">
+                        <div class="shell-center">L</div>
+                        <div class="shell-components">
+                            <div class="shell-item">
+                                <div class="shell-letter">S</div>
+                                <div class="shell-name">Software</div>
+                            </div>
+                            <div class="shell-item">
+                                <div class="shell-letter">H</div>
+                                <div class="shell-name">Hardware</div>
+                            </div>
+                            <div class="shell-item">
+                                <div class="shell-letter">E</div>
+                                <div class="shell-name">Environment</div>
+                            </div>
+                            <div class="shell-item">
+                                <div class="shell-letter">L</div>
+                                <div class="shell-name">Liveware</div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="data-table" style="margin-top: 15px;">
+                        <tr><th>Interface</th><th>Meaning</th></tr>
+                        <tr><td class="highlight-cyan">L-H</td><td>Human ↔ Machine</td></tr>
+                        <tr><td class="highlight-cyan">L-S</td><td>Human ↔ Procedures/Manuals</td></tr>
+                        <tr><td class="highlight-cyan">L-L</td><td>Human ↔ Human (CRM)</td></tr>
+                        <tr><td class="highlight-cyan">L-E</td><td>Human ↔ Environment</td></tr>
+                    </table>
+                    <div class="memory-hook">
+                        Software ≠ just computers! Includes manuals, SOPs, charts, symbology
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">ICAO 8 Core Competencies</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px;">
+                        Competence = <span class="highlight-amber">Knowledge</span> + <span class="highlight-cyan">Skills</span> + <span class="highlight-green">Attitudes</span>
+                    </p>
+                    <div class="competencies-list">
+                        <div class="competency-item"><span class="competency-num">1</span><span class="competency-name">Application of Procedures</span></div>
+                        <div class="competency-item"><span class="competency-num">2</span><span class="competency-name">Communication</span></div>
+                        <div class="competency-item"><span class="competency-num">3</span><span class="competency-name">Flight Path Mgmt — Auto</span></div>
+                        <div class="competency-item"><span class="competency-num">4</span><span class="competency-name">Flight Path Mgmt — Manual</span></div>
+                        <div class="competency-item"><span class="competency-num">5</span><span class="competency-name">Leadership & Teamwork</span></div>
+                        <div class="competency-item"><span class="competency-num">6</span><span class="competency-name">Problem-Solving & Decision-Making</span></div>
+                        <div class="competency-item"><span class="competency-num">7</span><span class="competency-name">Situation Awareness</span></div>
+                        <div class="competency-item"><span class="competency-num">8</span><span class="competency-name">Workload Management</span></div>
+                    </div>
+                    <div class="memory-hook">
+                        "FLY, TALK, THINK, LEAD" — Flight path (3), Communication (1), SA + Decisions (2), Leadership + Workload (2)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ERRORS SECTION -->
+        <section id="errors" class="section">
+            <h3 class="section-header">Error Classification & Models</h3>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <h4 class="card-title">Error Types by Category</h4>
+                    <table class="data-table">
+                        <tr><th>Category</th><th>Examples</th></tr>
+                        <tr>
+                            <td class="highlight-cyan">Aircraft Handling</td>
+                            <td>Wrong altitude, automation errors, taxi errors, wrong switches</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-amber">Procedural</td>
+                            <td>Checklist errors, missed callouts, documentation errors</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-green">Communication</td>
+                            <td>Wrong readback, crew miscommunication, missed calls</td>
+                        </tr>
+                    </table>
+                    <div class="memory-hook">
+                        Hands on controls? → Handling | Paper in hand? → Procedural | Mouth moving? → Communication
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Active vs Latent Errors</h4>
+                    <table class="data-table">
+                        <tr><th>Type</th><th>Timing</th><th>Who</th></tr>
+                        <tr>
+                            <td class="highlight-red">Active Error</td>
+                            <td>Immediate effect</td>
+                            <td>Front-line (pilot)</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-amber">Latent Error</td>
+                            <td>Delayed/dormant</td>
+                            <td>Management/System</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-cyan">Latent Threat</td>
+                            <td>Hidden condition</td>
+                            <td>Design/Organization</td>
+                        </tr>
+                    </table>
+                    <div class="key-point warning">
+                        ⚠️ Violations are ACTIVE errors — immediate potential consequences
+                    </div>
+                    <div class="memory-hook">
+                        Active = "I just screwed up" | Latent error = "Someone screwed up before" | Latent threat = "System designed to fail"
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Overcoming Vertigo</h4>
+                    <table class="data-table">
+                        <tr><th>#</th><th>Action</th><th>Correct?</th></tr>
+                        <tr><td>1</td><td>Effective instrument cross-check</td><td class="highlight-green">✓</td></tr>
+                        <tr><td>2</td><td>Always believe the instruments</td><td class="highlight-green">✓</td></tr>
+                        <tr><td>3</td><td>Jerk your head around</td><td class="highlight-red">✗ Causes Coriolis!</td></tr>
+                        <tr><td>4</td><td>Ignore arising illusions</td><td class="highlight-green">✓</td></tr>
+                    </table>
+                    <div class="memory-hook">
+                        "Head still, eyes on gauges, trust the glass, ignore your ass"
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HYPOXIA SECTION -->
+        <section id="hypoxia" class="section">
+            <h3 class="section-header">Hypoxia & Oxygen Physiology</h3>
+            
+            <div class="cards-grid">
+                <div class="card" style="grid-column: span 2;">
+                    <h4 class="card-title">The 4 Types of Hypoxia</h4>
+                    <div class="hypoxia-grid">
+                        <div class="hypoxia-card hypoxic">
+                            <div class="hypoxia-title">Hypoxic Hypoxia</div>
+                            <div class="hypoxia-desc">Not enough O₂ in the air</div>
+                            <div class="hypoxia-causes">Altitude, low pressure, reduced breathing</div>
+                        </div>
+                        <div class="hypoxia-card anaemic">
+                            <div class="hypoxia-title">Anaemic Hypoxia</div>
+                            <div class="hypoxia-desc">Blood can't carry O₂</div>
+                            <div class="hypoxia-causes">CO poisoning, smoking, blood loss, iron deficiency</div>
+                        </div>
+                        <div class="hypoxia-card stagnant">
+                            <div class="hypoxia-title">Stagnant Hypoxia</div>
+                            <div class="hypoxia-desc">Blood isn't moving</div>
+                            <div class="hypoxia-causes">Heart failure, G-forces, shock, cold</div>
+                        </div>
+                        <div class="hypoxia-card histotoxic">
+                            <div class="hypoxia-title">Histotoxic Hypoxia</div>
+                            <div class="hypoxia-desc">Cells can't use O₂</div>
+                            <div class="hypoxia-causes">Alcohol, drugs, narcotics, cyanide</div>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        ✓ CO binds to haemoglobin <span class="highlight-red">200× stronger</span> than O₂ → Anaemic hypoxia
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Hypoxia Stages by Altitude</h4>
+                    <table class="data-table">
+                        <tr><th>Altitude</th><th>Stage</th><th>Effects</th></tr>
+                        <tr><td>0-5,000 ft</td><td>Indifferent</td><td>Night vision affected from 5,000 ft</td></tr>
+                        <tr><td>7,000 ft</td><td>Reaction</td><td>Reaction time slows</td></tr>
+                        <tr><td>10-15,000 ft</td><td>Disturbance</td><td class="highlight-amber">Short-term memory impaired (12,000 ft)</td></tr>
+                        <tr><td>15-22,000 ft</td><td>Disturbance</td><td>Poor judgment, coordination</td></tr>
+                        <tr><td>>22,000 ft</td><td>Critical</td><td class="highlight-red">TUC critical, incapacitation</td></tr>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Time of Useful Consciousness (TUC)</h4>
+                    <div class="tuc-display">
+                        <div class="tuc-item">
+                            <div class="tuc-altitude">22,000 ft</div>
+                            <div class="tuc-time">5-10 min</div>
+                        </div>
+                        <div class="tuc-item">
+                            <div class="tuc-altitude">25,000 ft</div>
+                            <div class="tuc-time">3-5 min</div>
+                        </div>
+                        <div class="tuc-item">
+                            <div class="tuc-altitude">30,000 ft</div>
+                            <div class="tuc-time">1-2 min</div>
+                        </div>
+                        <div class="tuc-item">
+                            <div class="tuc-altitude">35,000 ft</div>
+                            <div class="tuc-time">30-60 sec</div>
+                        </div>
+                        <div class="tuc-item">
+                            <div class="tuc-altitude">40,000 ft</div>
+                            <div class="tuc-time">15-20 sec</div>
+                        </div>
+                        <div class="tuc-item">
+                            <div class="tuc-altitude">43,000 ft</div>
+                            <div class="tuc-time">9-12 sec</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">100% O₂ Equivalents</h4>
+                    <p style="font-size: 0.85rem; margin-bottom: 15px; color: var(--text-secondary);">
+                        Memory trick: <span class="highlight-amber">Subtract 30,000 ft</span>
+                    </p>
+                    <table class="data-table">
+                        <tr><th>100% O₂ at...</th><th>= Normal air at...</th></tr>
+                        <tr><td class="highlight-cyan">34,000 ft</td><td>Sea Level (MSL)</td></tr>
+                        <tr><td class="highlight-cyan">38,000 ft</td><td>8,000 ft</td></tr>
+                        <tr><td class="highlight-cyan">40,000 ft</td><td>10,000 ft</td></tr>
+                        <tr><td class="highlight-cyan">45,000 ft</td><td>20,000 ft</td></tr>
+                    </table>
+                    <div class="key-point warning">
+                        Above 34,000 ft: even 100% O₂ needs PRESSURE BREATHING
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VESTIBULAR SECTION -->
+        <section id="vestibular" class="section">
+            <h3 class="section-header">Vestibular Illusions</h3>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <h4 class="card-title">The Big Four Illusions</h4>
+                    <table class="data-table">
+                        <tr><th>Illusion</th><th>Trigger</th><th>False Sensation</th></tr>
+                        <tr>
+                            <td class="highlight-cyan">Somatogravic</td>
+                            <td>Linear acceleration</td>
+                            <td>Pitch UP (accel) or DOWN (decel)</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-amber">Somatogyral</td>
+                            <td>Prolonged rotation stops</td>
+                            <td>Still turning opposite way</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-red">Coriolis</td>
+                            <td>Head movement in turn</td>
+                            <td>Intense tumbling sensation</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-green">Autokinesis</td>
+                            <td>Staring at single light</td>
+                            <td>Light appears to move</td>
+                        </tr>
+                    </table>
+                    <div class="memory-hook">
+                        GRAVic = GRAVity = Linear | GYRal = GYRoscope = Rotation
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Graveyard Spin (Sensory Adaptation)</h4>
+                    <div class="flow-container">
+                        <div class="flow-item">Enter Spin</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-item">~20 sec: Feel Level<br><small>(adapted)</small></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-item">Stop Spin</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-item" style="border-color: var(--red);">Feel Opposite Spin!</div>
+                    </div>
+                    <div class="key-point warning">
+                        Pilot "corrects" by re-entering original spin → crash
+                    </div>
+                    <div class="memory-hook">
+                        Sensory adaptation = vestibular system "falls asleep" during constant rotation
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Proprioception (Seat-of-the-Pants)</h4>
+                    <table class="data-table">
+                        <tr><th>Sensation</th><th>Aircraft State</th></tr>
+                        <tr><td>Pressed INTO seat</td><td>Acceleration / +G / Climb</td></tr>
+                        <tr><td>Pushed FORWARD</td><td>Deceleration / Pushover</td></tr>
+                        <tr><td>One buttock pressure</td><td>Banking/Turning</td></tr>
+                        <tr><td>Heavy feeling</td><td>Positive G load</td></tr>
+                        <tr><td>Light/floating</td><td>Low or negative G</td></tr>
+                    </table>
+                    <div class="key-point warning">
+                        Proprioception is UNRELIABLE in sustained/unusual attitudes — TRUST INSTRUMENTS!
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Barotrauma vs DCS</h4>
+                    <table class="data-table">
+                        <tr><th>Condition</th><th>Direction</th><th>Mechanism</th></tr>
+                        <tr>
+                            <td class="highlight-amber">Barotrauma</td>
+                            <td class="highlight-red">DESCENDING ↓</td>
+                            <td>Pressure ↑, air can't get IN to ear</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-cyan">Decompression Sickness</td>
+                            <td class="highlight-green">CLIMBING ↑</td>
+                            <td>Pressure ↓, nitrogen bubbles form</td>
+                        </tr>
+                    </table>
+                    <div class="memory-hook">
+                        Descent = Difficult to equalize = Barotrauma | Climb = DCS
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISION SECTION -->
+        <section id="vision" class="section">
+            <h3 class="section-header">Vision & Eye Conditions</h3>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <h4 class="card-title">Refractive Errors</h4>
+                    <table class="data-table">
+                        <tr><th>Condition</th><th>Image Falls</th><th>Can See</th><th>Correction</th></tr>
+                        <tr>
+                            <td class="highlight-cyan">Myopia (Short-sighted)</td>
+                            <td>IN FRONT of retina</td>
+                            <td>Near ✓ Far ✗</td>
+                            <td>Concave (-)</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-amber">Hyperopia (Long-sighted)</td>
+                            <td>BEHIND retina</td>
+                            <td>Far ✓ Near ✗</td>
+                            <td>Convex (+)</td>
+                        </tr>
+                    </table>
+                    <div class="memory-hook">
+                        Falls Front = can't see Far | MYopia = MY eye too long
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">The Presby- Conditions (Aging)</h4>
+                    <div class="comparison-container">
+                        <div class="comparison-box">
+                            <div class="comparison-title">Presbyopia 👁️</div>
+                            <p style="font-size: 0.85rem;"><span class="highlight-cyan">Presbys + Opia</span> = Old + Sight</p>
+                            <p style="font-size: 0.85rem; margin-top: 10px;">Lens stiffens → loss of <span class="highlight-amber">accommodation</span> (near focus)</p>
+                            <p style="font-size: 0.85rem; margin-top: 5px;">Starts around age 40-45</p>
+                        </div>
+                        <div class="comparison-box">
+                            <div class="comparison-title">Presbycusis 👂</div>
+                            <p style="font-size: 0.85rem;"><span class="highlight-cyan">Presbys + Akousis</span> = Old + Hearing</p>
+                            <p style="font-size: 0.85rem; margin-top: 10px;"><span class="highlight-amber">High-frequency</span> hearing loss with age</p>
+                            <p style="font-size: 0.85rem; margin-top: 5px;">Consonants (S, T, F) become hard to hear</p>
+                        </div>
+                    </div>
+                    <div class="memory-hook">
+                        PRESBY = Presbyterian elders = OLD | Anything presby- = aging condition
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Cataracts vs Glaucoma</h4>
+                    <table class="data-table">
+                        <tr><th>Feature</th><th>Cataracts</th><th>Glaucoma</th></tr>
+                        <tr><td>What</td><td>Lens clouding</td><td>↑ Intraocular pressure</td></tr>
+                        <tr><td>Cause</td><td class="highlight-amber">UV exposure</td><td>Pressure/genetics</td></tr>
+                        <tr><td>Early detection</td><td class="highlight-green">Yes</td><td class="highlight-red">No — silent!</td></tr>
+                        <tr><td>Vision loss</td><td>General haze</td><td>Peripheral first</td></tr>
+                        <tr><td>Treatment</td><td class="highlight-green">Surgery ✓</td><td>Manage pressure</td></tr>
+                    </table>
+                    <div class="memory-hook">
+                        Cataracts = Cloudy, Caused by UV, Cured by surgery | Glaucoma = Goes unnoticed, Gradual peripheral loss
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Contact Lens Rule</h4>
+                    <div class="key-point">
+                        Contact lenses acceptable <span class="highlight-green">ONLY for distant vision correction</span>
+                    </div>
+                    <table class="data-table" style="margin-top: 15px;">
+                        <tr><th>Condition</th><th>Contacts?</th><th>Why</th></tr>
+                        <tr>
+                            <td>Myopia (Near-sighted)</td>
+                            <td class="highlight-green">✓ YES</td>
+                            <td>Needs distant correction</td>
+                        </tr>
+                        <tr>
+                            <td>Hyperopia (Far-sighted)</td>
+                            <td class="highlight-red">✗ Glasses only</td>
+                            <td>Needs near correction</td>
+                        </tr>
+                        <tr>
+                            <td>Presbyopia</td>
+                            <td class="highlight-red">✗ Glasses only</td>
+                            <td>Needs near correction</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- PHYSIOLOGY SECTION -->
+        <section id="physiology" class="section">
+            <h3 class="section-header">Physiology & Vital Signs</h3>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <h4 class="card-title">Healthy Adult Vital Signs</h4>
+                    <div class="vitals-grid">
+                        <div class="vital-box">
+                            <div class="vital-value">60-80</div>
+                            <div class="vital-label">Pulse (beats/min)</div>
+                        </div>
+                        <div class="vital-box">
+                            <div class="vital-value">12-20</div>
+                            <div class="vital-label">Breathing (breaths/min)</div>
+                        </div>
+                        <div class="vital-box">
+                            <div class="vital-value">120/80</div>
+                            <div class="vital-label">Blood Pressure (mmHg)</div>
+                        </div>
+                        <div class="vital-box">
+                            <div class="vital-value">5 L</div>
+                            <div class="vital-label">Cardiac Output (/min)</div>
+                        </div>
+                    </div>
+                    <div class="memory-hook">
+                        60-80 heart | 12-20 breath | 120/80 pressure | 5L output
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Lung Volumes</h4>
+                    <table class="data-table">
+                        <tr><th>Volume</th><th>Amount</th><th>What It Is</th></tr>
+                        <tr>
+                            <td class="highlight-cyan">Tidal Volume</td>
+                            <td class="highlight-amber">500 ml</td>
+                            <td>Normal breath in/out</td>
+                        </tr>
+                        <tr>
+                            <td>Expiratory Reserve</td>
+                            <td>1,000 ml</td>
+                            <td>Extra you CAN push out</td>
+                        </tr>
+                        <tr>
+                            <td>Inspiratory Reserve</td>
+                            <td>3,300 ml</td>
+                            <td>Extra you CAN breathe in</td>
+                        </tr>
+                        <tr>
+                            <td>Residual Volume</td>
+                            <td>1,200 ml</td>
+                            <td>Always stays in lungs</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-green">Total Capacity</td>
+                            <td>6 L (♂) / 4.2 L (♀)</td>
+                            <td>Everything combined</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Blood Components</h4>
+                    <table class="data-table">
+                        <tr><th>Component</th><th>Function</th></tr>
+                        <tr>
+                            <td class="highlight-red">Red Blood Cells</td>
+                            <td>Carry oxygen (haemoglobin)</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-cyan">White Blood Cells</td>
+                            <td>Immunity / Defense</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-amber">Platelets</td>
+                            <td>Coagulation (clotting)</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-green">Plasma</td>
+                            <td>Liquid carrier (~55% of blood)</td>
+                        </tr>
+                    </table>
+                    <div class="memory-hook">
+                        Red = Respiratory | White = Warriors | Platelets = Plugging holes
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">+Gz Vision Loss Sequence</h4>
+                    <div class="g-progression">
+                        <div class="g-stage">
+                            <span class="g-stage-num">1</span>
+                            <span class="g-stage-name">Tunnel Vision</span>
+                            <span class="g-stage-desc">Peripheral goes FIRST</span>
+                        </div>
+                        <div class="g-stage">
+                            <span class="g-stage-num">2</span>
+                            <span class="g-stage-name">Grey-out</span>
+                            <span class="g-stage-desc">Everything faded/washed</span>
+                        </div>
+                        <div class="g-stage">
+                            <span class="g-stage-num">3</span>
+                            <span class="g-stage-name">Black-out</span>
+                            <span class="g-stage-desc">Blind but STILL CONSCIOUS</span>
+                        </div>
+                        <div class="g-stage">
+                            <span class="g-stage-num">4</span>
+                            <span class="g-stage-name">G-LOC</span>
+                            <span class="g-stage-desc">Loss of Consciousness</span>
+                        </div>
+                    </div>
+                    <div class="key-point warning" style="margin-top: 15px;">
+                        ⚠️ Black-out ≠ unconscious! You're blind but still awake!
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLEEP SECTION -->
+        <section id="sleep" class="section">
+            <h3 class="section-header">Sleep & Fatigue</h3>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <h4 class="card-title">Sleep Cycles</h4>
+                    <table class="data-table">
+                        <tr><th>Parameter</th><th>Value</th></tr>
+                        <tr><td>Cycle length</td><td class="highlight-cyan">90-120 minutes</td></tr>
+                        <tr><td>Cycles per 8 hours</td><td class="highlight-amber">4-5 cycles</td></tr>
+                        <tr><td>REM periods per 8 hours</td><td class="highlight-green">4-5 REM bouts</td></tr>
+                    </table>
+                    <p style="font-size: 0.85rem; margin-top: 15px; color: var(--text-secondary);">
+                        Each cycle: N1 → N2 → N3 (deep) → N2 → REM
+                    </p>
+                    <div class="memory-hook">
+                        8 hours ÷ 90 min = ~5 cycles | Each cycle = 1 REM | 5 REM bouts total
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Sleep Stages</h4>
+                    <table class="data-table">
+                        <tr><th>Stage</th><th>Name</th><th>Key Feature</th></tr>
+                        <tr><td>N1</td><td>Light Sleep</td><td>Transition, easily awakened</td></tr>
+                        <tr><td>N2</td><td>Light Sleep</td><td>Sleep spindles, K-complexes</td></tr>
+                        <tr><td class="highlight-cyan">N3</td><td>Deep Sleep (SWS)</td><td>Restorative, hard to wake</td></tr>
+                        <tr><td class="highlight-amber">REM</td><td>Rapid Eye Movement</td><td>Dreams, memory consolidation</td></tr>
+                    </table>
+                    <div class="key-point">
+                        <span class="highlight-cyan">Deep sleep (N3)</span> = more in EARLY night<br>
+                        <span class="highlight-amber">REM</span> = more toward MORNING
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Sleep Apnoea</h4>
+                    <p style="font-size: 0.9rem; margin-bottom: 15px;">Repeated breathing stops during sleep due to airway obstruction</p>
+                    <table class="data-table">
+                        <tr><th>Symptom</th></tr>
+                        <tr><td>Loud snoring</td></tr>
+                        <tr><td>Gasping/choking during sleep</td></tr>
+                        <tr><td>Waking tired regardless of sleep duration</td></tr>
+                        <tr><td>Daytime sleepiness</td></tr>
+                        <tr><td>Poor concentration</td></tr>
+                    </table>
+                    <div class="key-point warning">
+                        HUGE aviation concern — leads to fatigue, microsleeps, impaired decisions. Class 1 medical issue!
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Obesity-Related Conditions</h4>
+                    <table class="data-table">
+                        <tr><th>Condition</th><th>Mechanism</th></tr>
+                        <tr>
+                            <td class="highlight-cyan">Sleep Apnoea</td>
+                            <td>Fat around neck → blocks airway</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-amber">Hypertension</td>
+                            <td>More mass → heart works harder</td>
+                        </tr>
+                        <tr>
+                            <td class="highlight-red">Arthritis</td>
+                            <td>Weight → joints crushed over time</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TIME LIMITS SECTION -->
+        <section id="limits" class="section">
+            <h3 class="section-header">Time Limitations & Rules</h3>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <h4 class="card-title">Diving Before Flying</h4>
+                    <table class="data-table">
+                        <tr><th>Dive Depth</th><th>Wait Time</th></tr>
+                        <tr>
+                            <td>< 30 ft (< 10m)</td>
+                            <td class="highlight-amber">12 hours</td>
+                        </tr>
+                        <tr>
+                            <td>> 30 ft (> 10m)</td>
+                            <td class="highlight-red">24 hours</td>
+                        </tr>
+                    </table>
+                    <div class="memory-hook">
+                        Shallow = 12 hrs | Deep = 24 hrs | Remember: 30 ft = 10 m
+                    </div>
+                    <div class="key-point">
+                        Why? Nitrogen dissolves under pressure. Ascending too soon = bubbles = <span class="highlight-red">Decompression Sickness</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">24-Hour Rules</h4>
+                    <table class="data-table">
+                        <tr><th>Activity</th><th>Wait Before Flying</th></tr>
+                        <tr><td>Deep diving (>10m)</td><td class="highlight-amber">24 hours</td></tr>
+                        <tr><td>Blood donation</td><td class="highlight-amber">24 hours</td></tr>
+                        <tr><td>Normal recreational diving</td><td class="highlight-amber">24 hours</td></tr>
+                    </table>
+                    <p style="font-size: 0.75rem; margin-top: 10px; color: var(--text-secondary);">
+                        Reference: EASA AIR OPS GM1 CAT.GEN.MPA.100(c)(2)
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Disease Transmission</h4>
+                    <table class="data-table">
+                        <tr><th>Disease</th><th>Transmission</th></tr>
+                        <tr><td class="highlight-cyan">Cholera</td><td>Contaminated water/food</td></tr>
+                        <tr><td class="highlight-cyan">Typhoid</td><td>Contaminated food/water</td></tr>
+                        <tr><td class="highlight-cyan">Hepatitis A</td><td>Contaminated food & water</td></tr>
+                        <tr><td class="highlight-amber">Tetanus</td><td>Bacteria into wound</td></tr>
+                        <tr><td class="highlight-red">Yellow Fever</td><td>Mosquitoes</td></tr>
+                        <tr><td class="highlight-red">Malaria</td><td>Mosquitoes</td></tr>
+                    </table>
+                    <div class="memory-hook">
+                        Water/Food: Cholera, Typhoid, Hep A | Mosquitoes: Malaria, Yellow Fever | Wound: Tetanus
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="card-title">Hyperventilation</h4>
+                    <table class="data-table">
+                        <tr><th>Parameter</th><th>Value</th></tr>
+                        <tr><td>Normal breathing rate</td><td class="highlight-green">12-20 /min</td></tr>
+                        <tr><td>Hyperventilation</td><td class="highlight-red">> 20 /min</td></tr>
+                    </table>
+                    <p style="font-size: 0.85rem; margin-top: 15px;">
+                        <span class="highlight-red">Effects:</span> Too much CO₂ blown off → alkalosis → tingling, dizziness, visual disturbance
+                    </p>
+                    <p style="font-size: 0.85rem; margin-top: 10px;">
+                        <span class="highlight-green">Treatment:</span> Slow breathing, stay calm, breathe into bag
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p class="footer-text">HPL 040 // EASA ATPL Study Reference // "Humans Fail — Systems Must Catch Us"</p>
+    </footer>
+
+    <script>
+        // Tab Navigation
+        const tabs = document.querySelectorAll('.nav-tab');
+        const sections = document.querySelectorAll('.section');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active from all
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                
+                // Add active to clicked
+                tab.classList.add('active');
+                const sectionId = tab.dataset.section;
+                document.getElementById(sectionId).classList.add('active');
+                
+                // Scroll to top of content
+                document.querySelector('.content-container').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
