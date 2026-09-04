@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLASS B COMMAND CENTER | ATPL Performance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e14;
+            --bg-secondary: #0d1117;
+            --bg-card: #151b23;
+            --bg-card-hover: #1a222c;
+            --cyan: #00f5ff;
+            --cyan-dim: #00f5ff40;
+            --amber: #ffb800;
+            --amber-dim: #ffb80040;
+            --green: #00ff88;
+            --green-dim: #00ff8840;
+            --red: #ff4757;
+            --red-dim: #ff475740;
+            --purple: #a855f7;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border: #30363d;
+            --glow-cyan: 0 0 20px #00f5ff40, 0 0 40px #00f5ff20;
+            --glow-amber: 0 0 20px #ffb80040;
+            --glow-green: 0 0 20px #00ff8840;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Rajdhani', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,245,255,0.01) 2px, rgba(0,245,255,0.01) 4px); pointer-events: none; z-index: 9999; }
+        .nav-container { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: linear-gradient(180deg, var(--bg-primary) 0%, transparent 100%); padding: 1rem 2rem 2rem; }
+        .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem; }
+        .logo { font-family: 'Orbitron', monospace; font-size: 1.4rem; font-weight: 800; color: var(--cyan); text-shadow: var(--glow-cyan); letter-spacing: 2px; }
+        .logo span { color: var(--amber); text-shadow: var(--glow-amber); }
+        .status-bar { display: flex; gap: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-secondary); }
+        .status-item { display: flex; align-items: center; gap: 0.5rem; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: var(--glow-green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .nav-tabs { display: flex; gap: 0.5rem; background: var(--bg-secondary); padding: 0.5rem; border-radius: 12px; border: 1px solid var(--border); flex-wrap: wrap; }
+        .nav-tab { font-family: 'Orbitron', monospace; font-size: 0.75rem; font-weight: 600; padding: 0.7rem 1rem; border: none; background: transparent; color: var(--text-secondary); cursor: pointer; border-radius: 8px; transition: all 0.3s ease; }
+        .nav-tab:hover { color: var(--text-primary); background: var(--bg-card); }
+        .nav-tab.active { background: linear-gradient(135deg, var(--cyan), #0088ff); color: var(--bg-primary); box-shadow: var(--glow-cyan); }
+        .main-content { padding: 8rem 2rem 2rem; max-width: 1600px; margin: 0 auto; }
+        .panel { display: none; animation: fadeIn 0.5s ease; }
+        .panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .knowledge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
+        .knowledge-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: all 0.3s ease; cursor: pointer; }
+        .knowledge-card:hover { transform: translateY(-4px); border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+        .card-header { padding: 1.2rem; background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card)); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .card-title { font-family: 'Orbitron', monospace; font-size: 0.9rem; font-weight: 600; color: var(--cyan); display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .card-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; padding: 0.2rem 0.5rem; background: var(--red-dim); color: var(--red); border-radius: 4px; text-transform: uppercase; }
+        .card-content { padding: 0; max-height: 0; overflow: hidden; transition: all 0.5s ease; }
+        .knowledge-card.expanded .card-content { max-height: 2000px; padding: 1.2rem; }
+        .card-expand-icon { font-size: 1.2rem; color: var(--text-secondary); transition: transform 0.3s ease; }
+        .knowledge-card.expanded .card-expand-icon { transform: rotate(180deg); }
+        .info-table { width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        .info-table th { text-align: left; padding: 0.6rem; background: var(--bg-secondary); color: var(--text-secondary); font-weight: 500; }
+        .info-table td { padding: 0.6rem; border-bottom: 1px solid var(--border); }
+        .info-table tr:last-child td { border-bottom: none; }
+        .value-cyan { color: var(--cyan); font-weight: 600; }
+        .value-amber { color: var(--amber); font-weight: 600; }
+        .value-green { color: var(--green); font-weight: 600; }
+        .value-red { color: var(--red); font-weight: 600; }
+        .formula-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem; margin: 0.7rem 0; font-family: 'JetBrains Mono', monospace; }
+        .formula-box .formula { color: var(--cyan); font-size: 1rem; margin-bottom: 0.4rem; }
+        .formula-box .note { color: var(--text-secondary); font-size: 0.75rem; }
+        .mnemonic-box { background: linear-gradient(135deg, rgba(168,85,247,0.2), transparent); border: 1px solid var(--purple); border-radius: 8px; padding: 0.9rem; margin: 0.7rem 0; }
+        .mnemonic-label { font-family: 'Orbitron', monospace; font-size: 0.65rem; color: var(--purple); text-transform: uppercase; margin-bottom: 0.4rem; }
+        .mnemonic-text { font-size: 0.9rem; }
+        .critical-highlight { background: linear-gradient(135deg, var(--red-dim), transparent); border: 2px solid var(--red); border-radius: 12px; padding: 1.2rem; margin: 0.8rem 0; }
+        .critical-title { font-family: 'Orbitron', monospace; font-size: 0.85rem; color: var(--red); text-transform: uppercase; margin-bottom: 0.8rem; }
+        .critical-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+        .critical-box { background: var(--bg-secondary); border-radius: 8px; padding: 0.9rem; text-align: center; }
+        .critical-box-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-secondary); margin-bottom: 0.4rem; }
+        .critical-box-value { font-family: 'Orbitron', monospace; font-size: 1.3rem; font-weight: 700; }
+        .critical-box-value.start { color: var(--green); }
+        .critical-box-value.max { color: var(--cyan); }
+        .playground-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem; }
+        .playground-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.4rem; }
+        .playground-title { font-family: 'Orbitron', monospace; font-size: 0.95rem; color: var(--amber); margin-bottom: 1.3rem; }
+        .slider-group { margin-bottom: 1.2rem; }
+        .slider-label { display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        .slider-label span:first-child { color: var(--text-secondary); }
+        .slider-value { color: var(--cyan); font-weight: 600; }
+        input[type="range"] { width: 100%; height: 8px; background: var(--bg-secondary); border-radius: 4px; outline: none; -webkit-appearance: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--cyan); border-radius: 50%; cursor: pointer; box-shadow: var(--glow-cyan); }
+        .result-display { background: var(--bg-secondary); border: 2px solid var(--cyan); border-radius: 12px; padding: 1.1rem; text-align: center; box-shadow: var(--glow-cyan); }
+        .result-label { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.4rem; }
+        .result-value { font-family: 'Orbitron', monospace; font-size: 1.8rem; font-weight: 700; color: var(--cyan); text-shadow: var(--glow-cyan); }
+        .result-unit { font-size: 0.85rem; color: var(--text-secondary); }
+        .result-formula { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px solid var(--border); }
+        .checkbox-group { display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.3rem; }
+        .checkbox-item { display: flex; align-items: center; gap: 0.7rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; cursor: pointer; }
+        .checkbox-item input[type="checkbox"] { display: none; }
+        .checkbox-custom { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 5px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; flex-shrink: 0; }
+        .checkbox-item input:checked + .checkbox-custom { background: var(--green); border-color: var(--green); }
+        .checkbox-item input:checked + .checkbox-custom::after { content: '✓'; color: var(--bg-primary); font-weight: bold; font-size: 0.75rem; }
+        .factor-badge { margin-left: auto; font-size: 0.75rem; color: var(--amber); }
+        .quiz-container { max-width: 900px; margin: 0 auto; }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.8rem; padding: 1rem 1.3rem; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); flex-wrap: wrap; gap: 1rem; }
+        .quiz-stats { display: flex; gap: 1.8rem; }
+        .stat-item { text-align: center; }
+        .stat-value { font-family: 'Orbitron', monospace; font-size: 1.4rem; font-weight: 700; }
+        .stat-value.score { color: var(--green); }
+        .stat-value.streak { color: var(--amber); }
+        .stat-value.timer { color: var(--cyan); }
+        .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; }
+        .quiz-progress { width: 180px; height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; }
+        .quiz-progress-bar { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--green)); transition: width 0.3s ease; }
+        .question-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.8rem; }
+        .question-number { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: var(--cyan); margin-bottom: 0.9rem; }
+        .question-text { font-size: 1.15rem; line-height: 1.6; margin-bottom: 1.3rem; }
+        .answer-options { display: grid; gap: 0.7rem; }
+        .answer-option { background: var(--bg-secondary); border: 2px solid var(--border); border-radius: 12px; padding: 0.9rem 1.1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.9rem; }
+        .answer-option:hover:not(.disabled) { border-color: var(--cyan); background: var(--bg-card-hover); }
+        .answer-option.correct { border-color: var(--green); background: var(--green-dim); }
+        .answer-option.incorrect { border-color: var(--red); background: var(--red-dim); }
+        .answer-option.disabled { cursor: not-allowed; opacity: 0.7; }
+        .option-letter { width: 28px; height: 28px; border-radius: 6px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--text-secondary); flex-shrink: 0; font-size: 0.85rem; }
+        .answer-option:hover:not(.disabled) .option-letter { background: var(--cyan); color: var(--bg-primary); }
+        .answer-option.correct .option-letter { background: var(--green); color: var(--bg-primary); }
+        .answer-option.incorrect .option-letter { background: var(--red); color: var(--bg-primary); }
+        .explanation-box { background: var(--bg-secondary); border-radius: 12px; padding: 1.3rem; margin-top: 1.3rem; display: none; }
+        .explanation-box.show { display: block; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .explanation-header { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.8rem; font-family: 'Orbitron', monospace; font-size: 0.85rem; }
+        .explanation-header.correct { color: var(--green); }
+        .explanation-header.incorrect { color: var(--red); }
+        .explanation-text { font-size: 0.85rem; line-height: 1.6; color: var(--text-secondary); }
+        .next-btn, .restart-btn { width: 100%; padding: 0.9rem; margin-top: 0.9rem; background: linear-gradient(135deg, var(--cyan), #0088ff); border: none; border-radius: 12px; font-family: 'Orbitron', monospace; font-size: 0.95rem; font-weight: 600; color: var(--bg-primary); cursor: pointer; transition: all 0.3s ease; }
+        .next-btn:hover, .restart-btn:hover { transform: translateY(-2px); box-shadow: var(--glow-cyan); }
+        .restart-btn { background: linear-gradient(135deg, var(--amber), #ff8800); }
+        .quiz-complete { text-align: center; padding: 2.5rem; }
+        .complete-icon { font-size: 3.5rem; margin-bottom: 0.9rem; }
+        .complete-title { font-family: 'Orbitron', monospace; font-size: 1.8rem; color: var(--green); margin-bottom: 0.9rem; }
+        .complete-score { font-family: 'Orbitron', monospace; font-size: 2.2rem; color: var(--cyan); margin-bottom: 1.8rem; }
+        .scenario-container { max-width: 900px; margin: 0 auto; }
+        .scenario-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        .scenario-header { background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card)); padding: 1.3rem; border-bottom: 1px solid var(--border); }
+        .scenario-title { font-family: 'Orbitron', monospace; font-size: 1.05rem; color: var(--amber); margin-bottom: 0.4rem; }
+        .scenario-subtitle { font-size: 0.85rem; color: var(--text-secondary); }
+        .scenario-body { padding: 1.3rem; }
+        .scenario-narrative { font-size: 1rem; line-height: 1.7; margin-bottom: 1.3rem; padding: 1.1rem; background: var(--bg-secondary); border-radius: 12px; border-left: 4px solid var(--cyan); }
+        .scenario-data { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.9rem; margin-bottom: 1.3rem; }
+        .data-item { background: var(--bg-secondary); border-radius: 8px; padding: 0.9rem; text-align: center; }
+        .data-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-secondary); margin-bottom: 0.4rem; }
+        .data-value { font-family: 'Orbitron', monospace; font-size: 1rem; color: var(--cyan); }
+        .scenario-question { font-size: 1rem; font-weight: 600; margin-bottom: 0.9rem; color: var(--amber); }
+        .scenario-choices { display: grid; gap: 0.7rem; }
+        .scenario-choice { background: var(--bg-secondary); border: 2px solid var(--border); border-radius: 12px; padding: 1.1rem; cursor: pointer; transition: all 0.2s ease; }
+        .scenario-choice:hover { border-color: var(--cyan); }
+        .scenario-choice.correct { border-color: var(--green); background: var(--green-dim); }
+        .scenario-choice.incorrect { border-color: var(--red); background: var(--red-dim); }
+        .choice-main { font-size: 0.95rem; margin-bottom: 0.2rem; }
+        .choice-detail { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-secondary); }
+        .scenario-result { margin-top: 1.3rem; padding: 1.3rem; border-radius: 12px; display: none; }
+        .scenario-result.show { display: block; animation: slideIn 0.3s ease; }
+        .scenario-result.success { background: var(--green-dim); border: 1px solid var(--green); }
+        .scenario-result.failure { background: var(--red-dim); border: 1px solid var(--red); }
+        .result-title { font-family: 'Orbitron', monospace; font-size: 0.95rem; margin-bottom: 0.7rem; }
+        .scenario-result.success .result-title { color: var(--green); }
+        .scenario-result.failure .result-title { color: var(--red); }
+        .result-explanation { font-size: 0.85rem; line-height: 1.6; }
+        .scenario-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.3rem; padding-top: 1.3rem; border-top: 1px solid var(--border); }
+        .scenario-btn { padding: 0.7rem 1.3rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; font-family: 'Orbitron', monospace; font-size: 0.8rem; color: var(--text-primary); cursor: pointer; transition: all 0.2s ease; }
+        .scenario-btn:hover { border-color: var(--cyan); }
+        .scenario-btn.primary { background: linear-gradient(135deg, var(--cyan), #0088ff); border: none; color: var(--bg-primary); }
+        .cheatsheet-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+        .cheatsheet-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.3rem; }
+        .cheatsheet-title { font-family: 'Orbitron', monospace; font-size: 0.9rem; color: var(--cyan); margin-bottom: 0.9rem; padding-bottom: 0.7rem; border-bottom: 1px solid var(--border); }
+        .cheatsheet-table { width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+        .cheatsheet-table th { text-align: left; padding: 0.4rem; color: var(--text-secondary); font-weight: 500; }
+        .cheatsheet-table td { padding: 0.4rem; }
+        .cheatsheet-table tr:nth-child(even) { background: var(--bg-secondary); }
+        .quick-ref { display: flex; align-items: center; gap: 0.9rem; padding: 0.7rem; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 0.7rem; }
+        .quick-ref:last-child { margin-bottom: 0; }
+        .ref-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
+        .ref-icon.green { background: var(--green-dim); color: var(--green); }
+        .ref-icon.cyan { background: var(--cyan-dim); color: var(--cyan); }
+        .ref-icon.amber { background: var(--amber-dim); color: var(--amber); }
+        .ref-icon.red { background: var(--red-dim); color: var(--red); }
+        .ref-content { flex: 1; min-width: 0; }
+        .ref-label { font-size: 0.7rem; color: var(--text-secondary); }
+        .ref-value { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        @media (max-width: 768px) {
+            .nav-container { padding: 0.7rem 1rem 1.3rem; }
+            .logo { font-size: 1.1rem; }
+            .nav-tab { font-size: 0.65rem; padding: 0.5rem 0.7rem; }
+            .main-content { padding: 7rem 1rem 1rem; }
+            .knowledge-grid, .playground-container, .cheatsheet-container { grid-template-columns: 1fr; }
+            .status-bar { display: none; }
+            .quiz-stats { gap: 1rem; }
+            .stat-value { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-container">
+        <div class="nav-header">
+            <div class="logo">CLASS <span>B</span> COMMAND CENTER</div>
+            <div class="status-bar">
+                <div class="status-item"><div class="status-dot"></div><span>SYSTEM ONLINE</span></div>
+                <div class="status-item"><span>ATPL PERFORMANCE</span></div>
+            </div>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-panel="knowledge">📊 KNOWLEDGE</button>
+            <button class="nav-tab" data-panel="playground">🧪 PLAYGROUND</button>
+            <button class="nav-tab" data-panel="quiz">⚡ RAPID FIRE</button>
+            <button class="nav-tab" data-panel="scenario">🎯 SCENARIOS</button>
+            <button class="nav-tab" data-panel="cheatsheet">🃏 CHEAT SHEET</button>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <!-- KNOWLEDGE HUB -->
+        <div id="knowledge" class="panel active">
+            <div class="knowledge-grid">
+                <div class="knowledge-card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-title">✈️ V-SPEEDS (CS 23.51)</div>
+                        <span class="card-expand-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="info-table">
+                            <thead><tr><th>Speed</th><th>SEP</th><th>MEP</th></tr></thead>
+                            <tbody>
+                                <tr><td>V<sub>R</sub></td><td class="value-green">≥ V<sub>S1</sub></td><td class="value-amber">max(1.05V<sub>MC</sub>, 1.1V<sub>S1</sub>)</td></tr>
+                                <tr><td>V<sub>2</sub></td><td class="value-green">1.2×V<sub>S1</sub></td><td class="value-amber">max(1.2V<sub>S1</sub>, 1.1V<sub>MC</sub>)</td></tr>
+                                <tr><td>V<sub>REF</sub></td><td class="value-green">1.3×V<sub>SO</sub></td><td class="value-amber">1.3×V<sub>SO</sub> AND >V<sub>MC</sub></td></tr>
+                            </tbody>
+                        </table>
+                        <div class="formula-box">
+                            <div class="formula">Speed at 50ft (SEP) ≥ 1.2 × V<sub>S1</sub></div>
+                            <div class="note">Example: 67 × 1.2 = 80.4 → <strong>81 kt</strong> (round UP!)</div>
+                        </div>
+                        <div class="mnemonic-box">
+                            <div class="mnemonic-label">💡 Memory Trick</div>
+                            <div class="mnemonic-text"><strong>SEP</strong> = Simple (one value)<br><strong>MEP</strong> = Must Evaluate Pair</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-title">🎯 OBSTACLE ACCOUNTABILITY <span class="card-badge">EXAM TRAP!</span></div>
+                        <span class="card-expand-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="critical-highlight">
+                            <div class="critical-title">⚠️ DON'T CONFUSE THESE!</div>
+                            <div class="critical-comparison">
+                                <div class="critical-box">
+                                    <div class="critical-box-label">AT AIRPORT (DER)</div>
+                                    <div class="critical-box-value start">90 m</div>
+                                    <div style="font-size:0.65rem;color:var(--text-secondary);margin-top:0.3rem">Starting width</div>
+                                </div>
+                                <div class="critical-box">
+                                    <div class="critical-box-label">MAXIMUM (visual ≤15°)</div>
+                                    <div class="critical-box-value max">300 m</div>
+                                    <div style="font-size:0.65rem;color:var(--text-secondary);margin-top:0.3rem">Grows to this</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="formula-box">
+                            <div class="formula">Half-width = 90 m + 0.125 × D</div>
+                            <div class="note">D = distance from DER</div>
+                        </div>
+                        <table class="info-table">
+                            <thead><tr><th>Condition</th><th>≤15°</th><th>>15°</th></tr></thead>
+                            <tbody>
+                                <tr><td>Visual/Precise Nav</td><td class="value-cyan">300 m</td><td class="value-amber">600 m</td></tr>
+                                <tr><td>All Other</td><td class="value-amber">600 m</td><td class="value-red">900 m</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-title">📏 T/O DISTANCE FACTORS</div>
+                        <span class="card-expand-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <h4 style="color:var(--amber);margin-bottom:0.5rem;font-family:'Orbitron';font-size:0.75rem">NO STOPWAY/CLEARWAY:</h4>
+                        <div class="formula-box">
+                            <div class="formula">TOD × 1.25 ≤ TORA</div>
+                            <div class="note">Single check only</div>
+                        </div>
+                        <h4 style="color:var(--amber);margin:0.9rem 0 0.5rem;font-family:'Orbitron';font-size:0.75rem">WITH STOPWAY/CLEARWAY:</h4>
+                        <table class="info-table">
+                            <tbody>
+                                <tr><td>TOD ≤ TORA</td><td class="value-green">×1.0</td></tr>
+                                <tr><td>TOD × 1.15 ≤ TODA</td><td class="value-cyan">×1.15</td></tr>
+                                <tr><td>TOD × 1.3 ≤ ASDA</td><td class="value-amber">×1.3</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="mnemonic-box">
+                            <div class="mnemonic-label">💡 Memory Trick</div>
+                            <div class="mnemonic-text">No extras = <strong>1.25</strong> only<br>With extras = <strong>1.0, 1.15, 1.3</strong> (ALL three!)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-title">🌿 SURFACE & SLOPE</div>
+                        <span class="card-expand-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="info-table">
+                            <thead><tr><th>Condition</th><th>Factor</th></tr></thead>
+                            <tbody>
+                                <tr><td>Grass Dry (≤20cm)</td><td class="value-amber">×1.2</td></tr>
+                                <tr><td>Grass Wet</td><td class="value-red">×1.3</td></tr>
+                                <tr><td>Paved Wet</td><td class="value-green">×1.0</td></tr>
+                                <tr><td>Per 1% Upslope</td><td class="value-red">×1.05</td></tr>
+                                <tr><td>Downslope</td><td class="value-green">×1.0 (no credit)</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="formula-box">
+                            <div class="formula">Factors STACK!</div>
+                            <div class="note">Wet grass + 2% up = 1.3 × 1.05 × 1.05 = <strong>1.43</strong></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-title">📐 SCREEN HEIGHTS</div>
+                        <span class="card-expand-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="info-table">
+                            <thead><tr><th>Class</th><th>T/O Dry</th><th>T/O Wet</th><th>Land</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>CLASS B</strong></td><td class="value-cyan">50 ft</td><td class="value-cyan">50 ft</td><td class="value-cyan">50 ft</td></tr>
+                                <tr><td>Class A</td><td class="value-amber">35 ft</td><td class="value-green">15 ft</td><td class="value-cyan">50 ft</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="mnemonic-box">
+                            <div class="mnemonic-label">💡 Memory Trick</div>
+                            <div class="mnemonic-text">Class B = <strong>FIFTY EVERYTHING</strong> 🎯</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-title">📈 CLIMB GRADIENTS</div>
+                        <span class="card-expand-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="info-table">
+                            <thead><tr><th>Condition</th><th>Class B</th><th>Class A</th></tr></thead>
+                            <tbody>
+                                <tr><td>All Engines T/O</td><td class="value-cyan">4%</td><td>—</td></tr>
+                                <tr><td>Balked Landing</td><td class="value-amber">2.5%</td><td class="value-red">3.2%</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="formula-box">
+                            <div class="formula">Balked 2.5% conditions:</div>
+                            <div class="note">• Power: 8 sec after T/O position<br>• Gear: Extended • Flaps: Landing<br>• Speed: V<sub>REF</sub></div>
+                        </div>
+                        <div class="mnemonic-box">
+                            <div class="mnemonic-label">💡 Memory Trick</div>
+                            <div class="mnemonic-text">B = <strong>2</strong>.5% (B looks like 2 🤓)<br>A = <strong>3</strong>.2% (A320 = 3.2)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-title">⬇️ DESCENT RATE</div>
+                        <span class="card-expand-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="result-display" style="margin-bottom:0.9rem">
+                            <div class="result-label">Class B Structural Limit</div>
+                            <div class="result-value">600<span class="result-unit">ft/min</span></div>
+                        </div>
+                        <div class="formula-box">
+                            <div class="formula">Rule of Thumb: Speed × 5</div>
+                            <div class="note">120 kt × 5 = 600 ft/min</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-title">🔄 ROLLING vs STATIC T/O</div>
+                        <span class="card-expand-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="info-table">
+                            <thead><tr><th>Technique</th><th>TOD</th><th>ASD</th></tr></thead>
+                            <tbody>
+                                <tr><td>Rolling</td><td class="value-red">↑ Increases</td><td class="value-red">↑ Increases</td></tr>
+                                <tr><td>Static</td><td class="value-green">Optimal</td><td class="value-green">Optimal</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="mnemonic-box">
+                            <div class="mnemonic-label">💡 Memory Trick</div>
+                            <div class="mnemonic-text"><strong>R</strong>olling = <strong>R</strong>elaxed = <strong>R</strong>unway <strong>R</strong>ises</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PLAYGROUND -->
+        <div id="playground" class="panel">
+            <div class="playground-container">
+                <div class="playground-section">
+                    <div class="playground-title">🔧 V-SPEED CALCULATOR (MEP)</div>
+                    <div class="slider-group">
+                        <div class="slider-label"><span>V<sub>S1</sub></span><span class="slider-value" id="vs1-value">70 kt</span></div>
+                        <input type="range" id="vs1-slider" min="50" max="100" value="70" oninput="calcV()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label"><span>V<sub>MC</sub></span><span class="slider-value" id="vmc-value">75 kt</span></div>
+                        <input type="range" id="vmc-slider" min="50" max="100" value="75" oninput="calcV()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label"><span>V<sub>SO</sub></span><span class="slider-value" id="vso-value">60 kt</span></div>
+                        <input type="range" id="vso-slider" min="40" max="80" value="60" oninput="calcV()">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.7rem;margin-top:1rem">
+                        <div class="result-display" style="padding:0.7rem"><div class="result-label">V<sub>R</sub></div><div class="result-value" id="vr-r" style="font-size:1.3rem">79</div><div class="result-formula" id="vr-f">1.05×75</div></div>
+                        <div class="result-display" style="padding:0.7rem;border-color:var(--amber)"><div class="result-label">V<sub>2</sub></div><div class="result-value" id="v2-r" style="font-size:1.3rem;color:var(--amber)">84</div><div class="result-formula" id="v2-f">1.2×70</div></div>
+                        <div class="result-display" style="padding:0.7rem;border-color:var(--green)"><div class="result-label">V<sub>REF</sub></div><div class="result-value" id="vref-r" style="font-size:1.3rem;color:var(--green)">78</div><div class="result-formula" id="vref-f">1.3×60</div></div>
+                    </div>
+                </div>
+                
+                <div class="playground-section">
+                    <div class="playground-title">🧮 T/O DISTANCE FACTORS</div>
+                    <div class="slider-group">
+                        <div class="slider-label"><span>AFM TOD</span><span class="slider-value" id="tod-val">800 m</span></div>
+                        <input type="range" id="tod-slider" min="400" max="1500" value="800" step="50" oninput="calcTOD()">
+                    </div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item"><input type="checkbox" id="c-gd" onchange="calcTOD()"><span class="checkbox-custom"></span>Grass Dry<span class="factor-badge">×1.2</span></label>
+                        <label class="checkbox-item"><input type="checkbox" id="c-gw" onchange="calcTOD()"><span class="checkbox-custom"></span>Grass Wet<span class="factor-badge">×1.3</span></label>
+                        <label class="checkbox-item"><input type="checkbox" id="c-s1" onchange="calcTOD()"><span class="checkbox-custom"></span>1% Upslope<span class="factor-badge">×1.05</span></label>
+                        <label class="checkbox-item"><input type="checkbox" id="c-s2" onchange="calcTOD()"><span class="checkbox-custom"></span>2% Upslope<span class="factor-badge">×1.1025</span></label>
+                    </div>
+                    <div class="result-display">
+                        <div class="result-label">FACTORED TOD</div>
+                        <div class="result-value" id="ftod">800<span class="result-unit">m</span></div>
+                        <div class="result-formula" id="ftod-f">800 × 1.0</div>
+                    </div>
+                    <div style="margin-top:0.9rem;padding:0.7rem;background:var(--bg-secondary);border-radius:8px;text-align:center">
+                        <div style="font-size:0.7rem;color:var(--text-secondary)">MIN TORA REQUIRED (×1.25)</div>
+                        <div style="font-family:'Orbitron';font-size:1.1rem;color:var(--amber)" id="min-tora">1000 m</div>
+                    </div>
+                </div>
+                
+                <div class="playground-section">
+                    <div class="playground-title">📐 CORRIDOR WIDTH</div>
+                    <div class="slider-group">
+                        <div class="slider-label"><span>Distance from DER</span><span class="slider-value" id="der-val">0 m</span></div>
+                        <input type="range" id="der-slider" min="0" max="5000" value="0" step="100" oninput="calcCorridor()">
+                    </div>
+                    <div class="result-display">
+                        <div class="result-label">HALF-WIDTH</div>
+                        <div class="result-value" id="corr-w">90<span class="result-unit">m</span></div>
+                        <div class="result-formula" id="corr-f">90 + 0.125×0</div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-top:0.9rem">
+                        <div style="padding:0.7rem;background:var(--bg-secondary);border-radius:8px;text-align:center"><div style="font-size:0.65rem;color:var(--text-secondary)">MAX (≤15°)</div><div style="font-family:'Orbitron';color:var(--cyan)">300 m</div></div>
+                        <div style="padding:0.7rem;background:var(--bg-secondary);border-radius:8px;text-align:center"><div style="font-size:0.65rem;color:var(--text-secondary)">MAX (>15°)</div><div style="font-family:'Orbitron';color:var(--amber)">600 m</div></div>
+                    </div>
+                </div>
+                
+                <div class="playground-section">
+                    <div class="playground-title">🎯 SPEED AT 50ft (SEP)</div>
+                    <div class="slider-group">
+                        <div class="slider-label"><span>V<sub>S1</sub></span><span class="slider-value" id="sep-vs1-val">67 kt</span></div>
+                        <input type="range" id="sep-vs1" min="50" max="90" value="67" oninput="calc50()">
+                    </div>
+                    <div class="result-display">
+                        <div class="result-label">MIN SPEED AT 50ft</div>
+                        <div class="result-value" id="sp50">81<span class="result-unit">kt</span></div>
+                        <div class="result-formula" id="sp50-f">67 × 1.2 = 80.4 → 81 (round UP)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- RAPID FIRE QUIZ -->
+        <div id="quiz" class="panel">
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <div class="quiz-stats">
+                        <div class="stat-item"><div class="stat-value score" id="q-score">0</div><div class="stat-label">Score</div></div>
+                        <div class="stat-item"><div class="stat-value streak" id="q-streak">0</div><div class="stat-label">Streak 🔥</div></div>
+                        <div class="stat-item"><div class="stat-value timer" id="q-num">1/10</div><div class="stat-label">Question</div></div>
+                    </div>
+                    <div class="quiz-progress"><div class="quiz-progress-bar" id="q-bar" style="width:10%"></div></div>
+                </div>
+                <div id="quiz-content"></div>
+                <div id="quiz-complete" class="quiz-complete" style="display:none">
+                    <div class="complete-icon">🎉</div>
+                    <div class="complete-title">MISSION COMPLETE!</div>
+                    <div class="complete-score">Score: <span id="final-score">0</span>/10</div>
+                    <button class="restart-btn" onclick="restartQuiz()">🔄 TRY AGAIN</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SCENARIOS -->
+        <div id="scenario" class="panel">
+            <div class="scenario-container">
+                <div class="scenario-card">
+                    <div class="scenario-header">
+                        <div class="scenario-title" id="sc-title">SCENARIO 1</div>
+                        <div class="scenario-subtitle" id="sc-sub"></div>
+                    </div>
+                    <div class="scenario-body">
+                        <div class="scenario-narrative" id="sc-narr"></div>
+                        <div class="scenario-data" id="sc-data"></div>
+                        <div class="scenario-question" id="sc-q"></div>
+                        <div class="scenario-choices" id="sc-choices"></div>
+                        <div class="scenario-result" id="sc-result">
+                            <div class="result-title" id="sc-res-title"></div>
+                            <div class="result-explanation" id="sc-res-exp"></div>
+                        </div>
+                        <div class="scenario-nav">
+                            <button class="scenario-btn" onclick="prevSc()">← Previous</button>
+                            <span id="sc-counter" style="color:var(--text-secondary)">1/3</span>
+                            <button class="scenario-btn primary" onclick="nextSc()">Next →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CHEAT SHEET -->
+        <div id="cheatsheet" class="panel">
+            <div class="cheatsheet-container">
+                <div class="cheatsheet-card">
+                    <div class="cheatsheet-title">✈️ V-SPEEDS</div>
+                    <div class="quick-ref"><div class="ref-icon green">V<sub>R</sub></div><div class="ref-content"><div class="ref-label">Rotation</div><div class="ref-value">SEP: ≥V<sub>S1</sub> | MEP: max(1.05V<sub>MC</sub>, 1.1V<sub>S1</sub>)</div></div></div>
+                    <div class="quick-ref"><div class="ref-icon cyan">V<sub>2</sub></div><div class="ref-content"><div class="ref-label">Safety Speed</div><div class="ref-value">SEP: 1.2V<sub>S1</sub> | MEP: max(1.2V<sub>S1</sub>, 1.1V<sub>MC</sub>)</div></div></div>
+                    <div class="quick-ref"><div class="ref-icon amber">V<sub>REF</sub></div><div class="ref-content"><div class="ref-label">Reference</div><div class="ref-value">1.3×V<sub>SO</sub> (MEP: also >V<sub>MC</sub>)</div></div></div>
+                    <div class="quick-ref"><div class="ref-icon red">50ft</div><div class="ref-content"><div class="ref-label">Screen Speed SEP</div><div class="ref-value">≥1.2×V<sub>S1</sub> (round UP!)</div></div></div>
+                </div>
+                
+                <div class="cheatsheet-card">
+                    <div class="cheatsheet-title">🔢 CRITICAL NUMBERS</div>
+                    <table class="cheatsheet-table">
+                        <tr><td>Screen Height (Class B)</td><td class="value-cyan">50 ft (all)</td></tr>
+                        <tr><td>OAA at DER</td><td class="value-green">90 m</td></tr>
+                        <tr><td>Max Lateral (≤15°)</td><td class="value-cyan">300 m</td></tr>
+                        <tr><td>Max Lateral (>15°)</td><td class="value-amber">600 m</td></tr>
+                        <tr><td>Descent Rate</td><td class="value-cyan">600 ft/min</td></tr>
+                        <tr><td>All Engine Gradient</td><td class="value-green">4%</td></tr>
+                        <tr><td>Balked Gradient</td><td class="value-amber">2.5%</td></tr>
+                    </table>
+                </div>
+                
+                <div class="cheatsheet-card">
+                    <div class="cheatsheet-title">📏 TOD FACTORS</div>
+                    <table class="cheatsheet-table">
+                        <tr><th colspan="2">No Stopway/Clearway</th></tr>
+                        <tr><td>TOD × 1.25 ≤ TORA</td><td class="value-cyan">Only check</td></tr>
+                        <tr><th colspan="2">With Stopway/Clearway</th></tr>
+                        <tr><td>TOD ≤ TORA</td><td class="value-green">×1.0</td></tr>
+                        <tr><td>TOD × 1.15 ≤ TODA</td><td class="value-cyan">×1.15</td></tr>
+                        <tr><td>TOD × 1.3 ≤ ASDA</td><td class="value-amber">×1.3</td></tr>
+                    </table>
+                </div>
+                
+                <div class="cheatsheet-card">
+                    <div class="cheatsheet-title">🌿 SURFACE & SLOPE</div>
+                    <table class="cheatsheet-table">
+                        <tr><td>Grass Dry</td><td class="value-amber">×1.2</td></tr>
+                        <tr><td>Grass Wet</td><td class="value-red">×1.3</td></tr>
+                        <tr><td>Paved Wet</td><td class="value-green">×1.0</td></tr>
+                        <tr><td>Per 1% Up</td><td class="value-red">×1.05</td></tr>
+                        <tr><td>Downslope</td><td class="value-green">×1.0</td></tr>
+                    </table>
+                </div>
+                
+                <div class="cheatsheet-card" style="grid-column:span 2">
+                    <div class="cheatsheet-title">🧠 MEMORY ARSENAL</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.9rem">
+                        <div class="mnemonic-box"><div class="mnemonic-label">V-Speeds</div><div class="mnemonic-text"><strong>SEP</strong>=Simple | <strong>MEP</strong>=Must Evaluate Pair</div></div>
+                        <div class="mnemonic-box"><div class="mnemonic-label">Screen Heights</div><div class="mnemonic-text">Class B = <strong>FIFTY</strong> everything</div></div>
+                        <div class="mnemonic-box"><div class="mnemonic-label">Gradients</div><div class="mnemonic-text">B=<strong>2</strong>.5% | A=<strong>3</strong>.2% (A320)</div></div>
+                        <div class="mnemonic-box"><div class="mnemonic-label">Rolling T/O</div><div class="mnemonic-text"><strong>R</strong>olling=<strong>R</strong>unway <strong>R</strong>ises</div></div>
+                        <div class="mnemonic-box"><div class="mnemonic-label">TOD Factors</div><div class="mnemonic-text">No extras=<strong>1.25</strong> | With=1.0,1.15,1.3</div></div>
+                        <div class="mnemonic-box"><div class="mnemonic-label">OAA Trap</div><div class="mnemonic-text">Start=<strong>90m</strong> | Max=<strong>300m</strong> (don't confuse!)</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.querySelectorAll('.nav-tab').forEach(t=>t.addEventListener('click',()=>{
+            document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+            t.classList.add('active');
+            document.getElementById(t.dataset.panel).classList.add('active');
+        }));
+        
+        function toggleCard(c){c.classList.toggle('expanded')}
+        
+        function calcV(){
+            const vs1=+document.getElementById('vs1-slider').value;
+            const vmc=+document.getElementById('vmc-slider').value;
+            const vso=+document.getElementById('vso-slider').value;
+            document.getElementById('vs1-value').textContent=vs1+' kt';
+            document.getElementById('vmc-value').textContent=vmc+' kt';
+            document.getElementById('vso-value').textContent=vso+' kt';
+            const vr1=Math.ceil(1.05*vmc),vr2=Math.ceil(1.1*vs1),vr=Math.max(vr1,vr2);
+            document.getElementById('vr-r').textContent=vr;
+            document.getElementById('vr-f').textContent=vr===vr1?`1.05×${vmc}`:`1.1×${vs1}`;
+            const v21=Math.ceil(1.2*vs1),v22=Math.ceil(1.1*vmc),v2=Math.max(v21,v22);
+            document.getElementById('v2-r').textContent=v2;
+            document.getElementById('v2-f').textContent=v2===v21?`1.2×${vs1}`:`1.1×${vmc}`;
+            document.getElementById('vref-r').textContent=Math.ceil(1.3*vso);
+            document.getElementById('vref-f').textContent=`1.3×${vso}`;
+        }
+        
+        function calcTOD(){
+            const base=+document.getElementById('tod-slider').value;
+            document.getElementById('tod-val').textContent=base+' m';
+            let f=1,parts=[];
+            if(document.getElementById('c-gw').checked){f*=1.3;parts.push('1.3');document.getElementById('c-gd').checked=false;}
+            else if(document.getElementById('c-gd').checked){f*=1.2;parts.push('1.2');}
+            if(document.getElementById('c-s2').checked){f*=1.1025;parts.push('1.1025');document.getElementById('c-s1').checked=false;}
+            else if(document.getElementById('c-s1').checked){f*=1.05;parts.push('1.05');}
+            const ftod=Math.ceil(base*f);
+            document.getElementById('ftod').innerHTML=ftod+'<span class="result-unit">m</span>';
+            document.getElementById('ftod-f').textContent=parts.length?`${base}×${parts.join('×')}`:`${base}×1.0`;
+            document.getElementById('min-tora').textContent=Math.ceil(ftod*1.25)+' m';
+        }
+        
+        function calcCorridor(){
+            const d=+document.getElementById('der-slider').value;
+            document.getElementById('der-val').textContent=d+' m';
+            const w=Math.min(90+0.125*d,600);
+            document.getElementById('corr-w').innerHTML=Math.ceil(w)+'<span class="result-unit">m</span>';
+            document.getElementById('corr-f').textContent=`90+0.125×${d}`;
+        }
+        
+        function calc50(){
+            const vs1=+document.getElementById('sep-vs1').value;
+            document.getElementById('sep-vs1-val').textContent=vs1+' kt';
+            const raw=vs1*1.2,sp=Math.ceil(raw);
+            document.getElementById('sp50').innerHTML=sp+'<span class="result-unit">kt</span>';
+            document.getElementById('sp50-f').textContent=`${vs1}×1.2=${raw.toFixed(1)}→${sp}`;
+        }
+        
+        const questions=[
+            {q:"Lateral clearance (visual, ≤15°)?",o:["90 m","300 m","600 m","900 m"],c:1,e:"300m is MAX. 90m is starting width at DER!"},
+            {q:"V_R for MEP: V_S1=76kt, V_MC=84kt?",o:["76 kt","84 kt","88 kt","90 kt"],c:2,e:"max(1.05×84=88, 1.1×76=84) = 88 kt"},
+            {q:"TOD factor vs TORA (no stopway)?",o:["1.0","1.15","1.25","1.3"],c:2,e:"No extras = ×1.25 only check"},
+            {q:"Class B screen height on takeoff?",o:["15 ft","35 ft","50 ft","Depends"],c:2,e:"Class B = 50ft for EVERYTHING"},
+            {q:"Wet grass surface factor?",o:["×1.0","×1.2","×1.3","×1.5"],c:2,e:"Wet grass = ×1.3, Dry = ×1.2"},
+            {q:"Balked landing gradient (Class B)?",o:["2.0%","2.5%","3.2%","4.0%"],c:1,e:"B=2.5%, A=3.2%"},
+            {q:"Structural descent rate (Class B)?",o:["300","500","600","800"],c:2,e:"600 ft/min. Speed×5 rule."},
+            {q:"OAA half-width AT airport (D=0)?",o:["60 m","90 m","300 m","600 m"],c:1,e:"At DER: 90m. It GROWS to 300m max!"},
+            {q:"Rolling T/O effect on TOD & ASD?",o:["Both ↓","TOD↑ ASD↓","Both ↑","No change"],c:2,e:"Rolling=Relaxed=Runway Rises (both↑)"},
+            {q:"V_REF minimum factor?",o:["1.1×V_SO","1.2×V_SO","1.3×V_SO","1.5×V_SO"],c:2,e:"V_REF ≥ 1.3×V_SO"}
+        ];
+        let qi=0,score=0,streak=0,answered=false;
+        
+        function loadQ(){
+            if(qi>=questions.length){
+                document.getElementById('quiz-content').style.display='none';
+                document.getElementById('quiz-complete').style.display='block';
+                document.getElementById('final-score').textContent=score;
+                return;
+            }
+            answered=false;
+            const q=questions[qi];
+            document.getElementById('q-num').textContent=`${qi+1}/${questions.length}`;
+            document.getElementById('q-bar').style.width=`${(qi+1)/questions.length*100}%`;
+            document.getElementById('quiz-content').innerHTML=`
+                <div class="question-card">
+                    <div class="question-number">QUESTION ${qi+1}</div>
+                    <div class="question-text">${q.q}</div>
+                    <div class="answer-options">${q.o.map((o,i)=>`<div class="answer-option" onclick="answer(${i})"><span class="option-letter">${'ABCD'[i]}</span><span>${o}</span></div>`).join('')}</div>
+                    <div class="explanation-box" id="exp"><div class="explanation-header" id="exp-h"></div><div class="explanation-text">${q.e}</div></div>
+                    <button class="next-btn" id="next-btn" style="display:none" onclick="nextQ()">NEXT →</button>
+                </div>`;
+        }
+        
+        function answer(i){
+            if(answered)return;
+            answered=true;
+            const q=questions[qi],opts=document.querySelectorAll('.answer-option');
+            opts.forEach(o=>o.classList.add('disabled'));
+            if(i===q.c){opts[i].classList.add('correct');score++;streak++;document.getElementById('exp-h').className='explanation-header correct';document.getElementById('exp-h').textContent='✅ CORRECT!';}
+            else{opts[i].classList.add('incorrect');opts[q.c].classList.add('correct');streak=0;document.getElementById('exp-h').className='explanation-header incorrect';document.getElementById('exp-h').textContent='❌ WRONG';}
+            document.getElementById('q-score').textContent=score;
+            document.getElementById('q-streak').textContent=streak;
+            document.getElementById('exp').classList.add('show');
+            document.getElementById('next-btn').style.display='block';
+        }
+        
+        function nextQ(){qi++;loadQ();}
+        function restartQuiz(){qi=0;score=0;streak=0;document.getElementById('q-score').textContent=0;document.getElementById('q-streak').textContent=0;document.getElementById('quiz-content').style.display='block';document.getElementById('quiz-complete').style.display='none';loadQ();}
+        
+        const scenarios=[
+            {title:"SCENARIO 1: Grass Strip Challenge",sub:"Planning departure from rural airfield...",narr:"You're flying a Class B MEP charter. The client wants to depart from a grass airfield. It rained last night - grass is wet. Runway has 1% upslope. AFM shows 650m TOD for dry/paved/level.",data:[{l:"AFM TOD",v:"650 m"},{l:"Surface",v:"Wet Grass"},{l:"Slope",v:"1% Up"},{l:"TORA",v:"1100 m"}],q:"Can you safely depart?",choices:[{m:"✅ Yes",d:"650×1.3=845m < 1100m",c:false},{m:"✅ Yes",d:"650×1.3×1.05=887m, ×1.25=1109m fits!",c:false},{m:"❌ No",d:"650×1.3×1.05=887m, ×1.25=1109m > 1100m",c:true},{m:"❌ No",d:"Using wrong factor 1.2",c:false}],exp:"Wet grass=×1.3, 1% up=×1.05. Factored=650×1.3×1.05=887m. Need 887×1.25=1109m. TORA=1100m. <span style='color:var(--red)'>1109>1100 = NO GO!</span>"},
+            {title:"SCENARIO 2: V-Speed Check",sub:"Pre-flight calculations...",narr:"Class B MEP departure. V_S1=72kt, V_MC=80kt. Calculate V_R.",data:[{l:"V_S1",v:"72 kt"},{l:"V_MC",v:"80 kt"},{l:"Type",v:"MEP"},{l:"Class",v:"B"}],q:"What is minimum V_R?",choices:[{m:"72 kt",d:"V_R = V_S1",c:false},{m:"79 kt",d:"1.1×72=79.2",c:false},{m:"84 kt",d:"1.05×80=84",c:true},{m:"88 kt",d:"1.1×80=88",c:false}],exp:"MEP V_R = max(1.05×V_MC, 1.1×V_S1). 1.05×80=<strong>84kt</strong> vs 1.1×72=79.2kt. <span style='color:var(--green)'>V_R = 84 kt</span>"},
+            {title:"SCENARIO 3: OAA Trap",sub:"Classic exam question...",narr:"Question asks: What is the obstacle accountability area dimension around an AIRPORT for Class B with turns ≤15°?",data:[{l:"Location",v:"At Airport"},{l:"Turns",v:"≤15°"},{l:"Conditions",v:"Visual"},{l:"Class",v:"B"}],q:"What is the OAA dimension AT THE AIRPORT?",choices:[{m:"90 m",d:"Starting half-width at DER",c:true},{m:"300 m",d:"Max lateral clearance",c:false},{m:"600 m",d:"Max for >15°",c:false},{m:"180 m",d:"Full width at DER",c:false}],exp:"EXAM TRAP! At airport (D=0): 90+0.125×0=<span style='color:var(--green)'>90m</span>. The 300m is MAXIMUM it grows to. Don't confuse!"}
+        ];
+        let si=0;
+        
+        function loadSc(){
+            const s=scenarios[si];
+            document.getElementById('sc-title').textContent=s.title;
+            document.getElementById('sc-sub').textContent=s.sub;
+            document.getElementById('sc-narr').textContent=s.narr;
+            document.getElementById('sc-q').textContent=s.q;
+            document.getElementById('sc-counter').textContent=`${si+1}/${scenarios.length}`;
+            document.getElementById('sc-data').innerHTML=s.data.map(d=>`<div class="data-item"><div class="data-label">${d.l}</div><div class="data-value">${d.v}</div></div>`).join('');
+            document.getElementById('sc-choices').innerHTML=s.choices.map(c=>`<div class="scenario-choice" data-c="${c.c}" onclick="checkSc(this)"><div class="choice-main">${c.m}</div><div class="choice-detail">${c.d}</div></div>`).join('');
+            document.getElementById('sc-result').className='scenario-result';
+            document.getElementById('sc-res-exp').innerHTML=s.exp;
+        }
+        
+        function checkSc(el){
+            if(el.classList.contains('correct')||el.classList.contains('incorrect'))return;
+            const correct=el.dataset.c==='true';
+            document.querySelectorAll('.scenario-choice').forEach(c=>{if(c.dataset.c==='true')c.classList.add('correct');else if(c===el&&!correct)c.classList.add('incorrect');});
+            const r=document.getElementById('sc-result');
+            r.className=`scenario-result show ${correct?'success':'failure'}`;
+            document.getElementById('sc-res-title').textContent=correct?'✅ CORRECT!':'❌ NOT QUITE...';
+        }
+        
+        function nextSc(){si=(si+1)%scenarios.length;loadSc();}
+        function prevSc(){si=(si-1+scenarios.length)%scenarios.length;loadSc();}
+        
+        document.addEventListener('DOMContentLoaded',()=>{calcV();calcTOD();calcCorridor();calc50();loadQ();loadSc();});
+    </script>
+</body>
+</html>
