@@ -106,19 +106,23 @@
     letter-spacing: 2px;
   }
 
-  .home-link {
-    display: inline-block;
-    margin-bottom: 12px;
+  /* === RETURN TO HOMEPAGE LINK === */
+  .nav-home {
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  .nav-home a {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     color: var(--cyan);
     text-decoration: none;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
   }
 
-  .home-link:hover {
+  .nav-home a:hover {
     color: #fff;
     text-shadow: 0 0 8px var(--cyan);
   }
@@ -516,10 +520,12 @@
   <!-- HEADER -->
   <div class="header">
     <div class="header-badge">
-      <a href="index.html" class="home-link">← Return to Homepage</a>
       <div class="tag">GNAV · Module</div>
       <h1>DESCENT FORMULAS</h1>
       <div class="subtitle">Gradient · ROD · 1-in-60 Rule · Fist Rule</div>
+      <div class="nav-home">
+        <a href="index.html">← Return to Homepage</a>
+      </div>
     </div>
   </div>
 
