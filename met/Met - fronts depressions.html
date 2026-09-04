@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATPL Meteorology - Fronts & Depressions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --warm: #e63946;
+            --cold: #457b9d;
+            --accent: #f4a261;
+            --dark: #1d3557;
+            --light: #f1faee;
+            --mid: #a8dadc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            position: relative;
+            background: linear-gradient(90deg, transparent, rgba(244,162,97,0.1), transparent);
+            border-radius: 20px;
+        }
+
+        h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #f4a261, #e76f51, #f4a261);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* Section Styling */
+        .section {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .section-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title .icon {
+            font-size: 1.8rem;
+        }
+
+        /* Grid Layouts */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .three-col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .two-col, .three-col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Front Comparison Cards */
+        .front-card {
+            background: linear-gradient(135deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .front-card.warm {
+            border-left: 5px solid var(--warm);
+        }
+
+        .front-card.cold {
+            border-left: 5px solid var(--cold);
+        }
+
+        .front-card h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .front-card.warm h3 { color: var(--warm); }
+        .front-card.cold h3 { color: var(--cold); }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Cloud Sequence */
+        .cloud-sequence {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cloud-sequence::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cold), var(--warm));
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .cloud-item {
+            background: linear-gradient(135deg, #1e3a5f, #0f172a);
+            padding: 15px 20px;
+            border-radius: 12px;
+            text-align: center;
+            z-index: 1;
+            min-width: 100px;
+            border: 2px solid rgba(244,162,97,0.3);
+        }
+
+        .cloud-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .cloud-dist {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        /* Precipitation Table */
+        .precip-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .precip-table th {
+            background: rgba(244,162,97,0.2);
+            padding: 12px;
+            text-align: left;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: var(--accent);
+            border-radius: 8px 0 0 8px;
+        }
+
+        .precip-table th:last-child {
+            border-radius: 0 8px 8px 0;
+            text-align: right;
+        }
+
+        .precip-table td {
+            background: rgba(255,255,255,0.03);
+            padding: 12px 15px;
+            border-radius: 8px;
+        }
+
+        .precip-table tr td:first-child {
+            border-radius: 8px 0 0 8px;
+            font-weight: 600;
+            color: var(--mid);
+        }
+
+        .precip-table tr td:last-child {
+            border-radius: 0 8px 8px 0;
+            text-align: right;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        /* Mnemonic Box */
+        .mnemonic {
+            background: linear-gradient(135deg, rgba(244,162,97,0.15), rgba(231,111,81,0.1));
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .mnemonic-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .mnemonic-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .mnemonic-text span {
+            color: var(--accent);
+        }
+
+        /* Depression Lifecycle */
+        .lifecycle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .lifecycle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 8%;
+            right: 8%;
+            height: 6px;
+            background: linear-gradient(90deg, #22c55e, #3b82f6, #f97316, #ef4444);
+            transform: translateY(-50%);
+            border-radius: 3px;
+        }
+
+        .lifecycle-stage {
+            text-align: center;
+            z-index: 1;
+        }
+
+        .stage-num {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .lifecycle-stage:nth-child(1) .stage-num { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .lifecycle-stage:nth-child(2) .stage-num { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .lifecycle-stage:nth-child(3) .stage-num { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .lifecycle-stage:nth-child(4) .stage-num { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        .stage-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .stage-desc {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            max-width: 150px;
+        }
+
+        /* Lifespan badges */
+        .lifespan-row {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .lifespan-badge {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lifespan-badge .label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .lifespan-badge .value {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.3rem;
+            color: var(--accent);
+        }
+
+        /* Occlusion Types */
+        .occlusion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .occlusion-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .occlusion-card h4 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .occlusion-card.cold-occ h4 { color: var(--cold); }
+        .occlusion-card.warm-occ h4 { color: var(--warm); }
+
+        .occlusion-card p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .occlusion-card .key-point {
+            background: rgba(244,162,97,0.15);
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 10px;
+        }
+
+        /* Air Masses */
+        .air-mass-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .air-mass-table th {
+            background: rgba(244,162,97,0.2);
+            padding: 12px 15px;
+            text-align: left;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            color: var(--accent);
+        }
+
+        .air-mass-table th:first-child { border-radius: 8px 0 0 8px; }
+        .air-mass-table th:last-child { border-radius: 0 8px 8px 0; }
+
+        .air-mass-table td {
+            background: rgba(255,255,255,0.03);
+            padding: 12px 15px;
+            font-size: 0.9rem;
+        }
+
+        .air-mass-table tr td:first-child { border-radius: 8px 0 0 8px; }
+        .air-mass-table tr td:last-child { border-radius: 0 8px 8px 0; }
+
+        .air-mass-code {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            color: var(--mid);
+        }
+
+        /* Exam Tips */
+        .exam-tips {
+            background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(244,162,97,0.1));
+            border: 2px solid rgba(239,68,68,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .exam-tips h4 {
+            font-family: 'Oswald', sans-serif;
+            color: #ef4444;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .exam-tips ul {
+            list-style: none;
+        }
+
+        .exam-tips li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .exam-tips li::before {
+            content: '⚠️';
+            position: absolute;
+            left: 0;
+            top: 8px;
+        }
+
+        .exam-tips strong {
+            color: var(--accent);
+        }
+
+        /* Keyword Triggers */
+        .keyword-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .keyword-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .keyword-trigger {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .keyword-answer {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.4rem;
+            color: var(--accent);
+        }
+
+        /* Cloud Formation Rules */
+        .formation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .formation-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border-top: 3px solid var(--mid);
+        }
+
+        .formation-composition {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .formation-result {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.3rem;
+            color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        /* Highlight colors */
+        .highlight-warm { color: var(--warm); }
+        .highlight-cold { color: var(--cold); }
+        .highlight-accent { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⛈️ Fronts & Depressions</h1>
+            <p class="subtitle">EASA ATPL Meteorology Study Guide</p>
+        </header>
+
+        <!-- Front Comparison Section -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">🌡️</span> Front Comparison</h2>
+            <div class="two-col">
+                <div class="front-card warm">
+                    <h3>☀️ WARM FRONT</h3>
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Speed</div>
+                            <div class="stat-value">~10 kt</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Weather Band</div>
+                            <div class="stat-value">400-600 nm</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Passage Time</div>
+                            <div class="stat-value">4-7 days</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Slope</div>
+                            <div class="stat-value">1:150</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: #94a3b8;">
+                        <strong style="color: var(--warm);">Characteristics:</strong> Gentle slope, stratiform clouds (CI→CS→AS→NS), continuous precipitation, poor visibility, fog possible at front passage
+                    </p>
+                </div>
+
+                <div class="front-card cold">
+                    <h3>❄️ COLD FRONT</h3>
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Speed</div>
+                            <div class="stat-value">20-25 kt</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Weather Band</div>
+                            <div class="stat-value">~200 nm</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Passage Time</div>
+                            <div class="stat-value">2-3 days</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Slope</div>
+                            <div class="stat-value">1:50</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: #94a3b8;">
+                        <strong style="color: var(--cold);">Characteristics:</strong> Steep slope, convective clouds (CU, CB), heavy showers, thunderstorms, hail possible, good visibility after passage
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cloud Sequence Section -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">☁️</span> Warm Front Cloud Sequence</h2>
+            <p style="margin-bottom: 15px; color: #94a3b8;">Approaching a warm front from ahead (distances from surface front):</p>
+            <div class="cloud-sequence">
+                <div class="cloud-item">
+                    <div class="cloud-name">CI</div>
+                    <div class="cloud-dist">~1000 km<br>(600 nm)</div>
+                </div>
+                <div style="font-size: 2rem; z-index: 1;">→</div>
+                <div class="cloud-item">
+                    <div class="cloud-name">CS</div>
+                    <div class="cloud-dist">~800 km</div>
+                </div>
+                <div style="font-size: 2rem; z-index: 1;">→</div>
+                <div class="cloud-item">
+                    <div class="cloud-name">AS</div>
+                    <div class="cloud-dist">~500 km</div>
+                </div>
+                <div style="font-size: 2rem; z-index: 1;">→</div>
+                <div class="cloud-item">
+                    <div class="cloud-name">NS</div>
+                    <div class="cloud-dist">150-200 nm<br>(280-370 km)</div>
+                </div>
+            </div>
+            <div class="exam-tips" style="margin-top: 20px;">
+                <h4>⚠️ EXAM TRAP</h4>
+                <ul>
+                    <li>If they give <strong>1000 km</strong> as an option for Nimbostratus → <strong>ELIMINATE IT</strong>. NS is found much closer (~150-200 nm)</li>
+                    <li><strong>Cirrus appears FIRST</strong> at ~600 nm from the front</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Depression Lifecycle -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">🌀</span> Depression Life Cycle</h2>
+            <div class="lifecycle">
+                <div class="lifecycle-stage">
+                    <div class="stage-num">1</div>
+                    <div class="stage-name">CYCLOGENESIS</div>
+                    <div class="stage-desc">Disturbance + pressure fall → cyclonic circulation begins</div>
+                </div>
+                <div class="lifecycle-stage">
+                    <div class="stage-num">2</div>
+                    <div class="stage-name">DEVELOPED</div>
+                    <div class="stage-desc">Fronts well-defined, pronounced warm sector</div>
+                </div>
+                <div class="lifecycle-stage">
+                    <div class="stage-num">3</div>
+                    <div class="stage-name">OCCLUSION</div>
+                    <div class="stage-desc">Cold front catches warm front, warm air partially lifted</div>
+                </div>
+                <div class="lifecycle-stage">
+                    <div class="stage-num">4</div>
+                    <div class="stage-name">FRONTOLYSIS</div>
+                    <div class="stage-desc">All warm air lifted, system decays</div>
+                </div>
+            </div>
+            <div class="mnemonic">
+                <div class="mnemonic-title">💡 MEMORY AID</div>
+                <div class="mnemonic-text"><span>C</span>reate → <span>D</span>evelop → <span>O</span>cclude → <span>F</span>ade</div>
+            </div>
+            <div class="lifespan-row">
+                <div class="lifespan-badge">
+                    <span class="label">Frontal Depression Lifespan</span>
+                    <span class="value">7-10 days</span>
+                </div>
+                <div class="lifespan-badge">
+                    <span class="label">Mid-Latitude Depression Lifespan</span>
+                    <span class="value">4-7 days</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Occlusion Types -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">🔄</span> Occlusion Types</h2>
+            <div class="occlusion-grid">
+                <div class="occlusion-card cold-occ">
+                    <h4>❄️ COLD OCCLUSION</h4>
+                    <p>Cold air behind cold front is <strong>COLDER</strong> than cool air ahead of warm front</p>
+                    <p>Cold front undercuts the warm front</p>
+                    <div class="key-point">WARM FRONT loses contact with ground</div>
+                    <p style="margin-top: 10px; font-size: 0.85rem;">More common in polar regions / winter</p>
+                </div>
+                <div class="occlusion-card warm-occ">
+                    <h4>☀️ WARM OCCLUSION</h4>
+                    <p>Cold air behind cold front is <strong>LESS COLD</strong> than cool air ahead</p>
+                    <p>Cold front rides up over the cool air</p>
+                    <div class="key-point">COLD FRONT loses contact with ground</div>
+                    <p style="margin-top: 10px; font-size: 0.85rem;">More common in maritime / oceanic areas</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Precipitation Section -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">🌧️</span> Precipitation Sizes</h2>
+            <table class="precip-table">
+                <thead>
+                    <tr>
+                        <th>TYPE</th>
+                        <th style="text-align: right;">DIAMETER</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Drizzle</td>
+                        <td>&lt; 0.5 mm</td>
+                    </tr>
+                    <tr>
+                        <td>Snow</td>
+                        <td>&lt; 1 mm</td>
+                    </tr>
+                    <tr>
+                        <td>Ice Pellets (Sleet)</td>
+                        <td>&lt; 5 mm</td>
+                    </tr>
+                    <tr>
+                        <td>Rain</td>
+                        <td>0.5 – 5.5 mm</td>
+                    </tr>
+                    <tr>
+                        <td>Hail</td>
+                        <td>5 – 50+ mm</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="mnemonic">
+                <div class="mnemonic-title">💡 MEMORY AID (Smallest → Largest)</div>
+                <div class="mnemonic-text">"<span>Dr.</span> <span>Snow</span> <span>I</span>s <span>R</span>acist & <span>H</span>omophobic"</div>
+                <p style="margin-top: 10px; font-size: 0.85rem; color: #94a3b8;">Drizzle → Snow → Ice pellets → Rain → Hail</p>
+            </div>
+        </section>
+
+        <!-- Cloud Formation & Precipitation -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">⚗️</span> Cloud Composition → Precipitation Type</h2>
+            <div class="formation-grid">
+                <div class="formation-card">
+                    <div class="formation-composition">Ice crystals + water droplets</div>
+                    <div class="formation-result">RAIN</div>
+                </div>
+                <div class="formation-card">
+                    <div class="formation-composition">Ice crystals + <strong>SUPERCOOLED</strong> water droplets</div>
+                    <div class="formation-result">SNOW</div>
+                </div>
+                <div class="formation-card">
+                    <div class="formation-composition">Ice crystals + water droplets + <strong>GREAT EXTENT</strong></div>
+                    <div class="formation-result">HAIL</div>
+                </div>
+            </div>
+
+            <h3 style="font-family: 'Oswald', sans-serif; margin: 25px 0 15px; font-size: 1.2rem; letter-spacing: 2px; color: var(--mid);">EXAM KEYWORD TRIGGERS</h3>
+            <div class="keyword-grid">
+                <div class="keyword-card">
+                    <div class="keyword-trigger">"First to fall" / "Starts out as"</div>
+                    <div class="keyword-answer">SNOW ❄️</div>
+                </div>
+                <div class="keyword-card">
+                    <div class="keyword-trigger">"Most likely"</div>
+                    <div class="keyword-answer">HAIL 🧊</div>
+                </div>
+                <div class="keyword-card">
+                    <div class="keyword-trigger">"Least likely"</div>
+                    <div class="keyword-answer">DRIZZLE 💧</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Air Masses -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">🌍</span> 5 Air Masses Affecting Europe</h2>
+            <table class="air-mass-table">
+                <thead>
+                    <tr>
+                        <th>AIR MASS</th>
+                        <th>CODE</th>
+                        <th>SOURCE</th>
+                        <th>CHARACTERISTICS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Arctic Maritime</td>
+                        <td class="air-mass-code">mAc</td>
+                        <td>Polar ice cap <em>(NH winter only)</em></td>
+                        <td>Stable, very cold, dry</td>
+                    </tr>
+                    <tr>
+                        <td>Polar Maritime</td>
+                        <td class="air-mass-code">mPc</td>
+                        <td>NW North Atlantic</td>
+                        <td>Stable, cold, low AH, <strong>high RH</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Polar Continental</td>
+                        <td class="air-mass-code">cPc</td>
+                        <td>Siberia <em>(winter only)</em></td>
+                        <td>Stable, <strong>very cold</strong>, dry ⚠️</td>
+                    </tr>
+                    <tr>
+                        <td>Tropical Maritime</td>
+                        <td class="air-mass-code">mTw</td>
+                        <td>Azores anticyclone</td>
+                        <td>Warm, stable, <strong>high AH & RH</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Tropical Continental</td>
+                        <td class="air-mass-code">cTw</td>
+                        <td>N Africa / SE Europe</td>
+                        <td>Warm, dry, stable</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="exam-tips">
+                <h4>⚠️ EXAM TRAPS</h4>
+                <ul>
+                    <li><strong>cPc (Polar Continental) is COLDER than mAc (Arctic Maritime)</strong> – counterintuitive but important!</li>
+                    <li><strong>Maritime = high RH</strong> (picked up moisture over ocean)</li>
+                    <li><strong>Continental = dry</strong> (no ocean moisture source)</li>
+                    <li><strong>mPc</strong> – low absolute humidity but <strong>high relative humidity</strong> (cold air can't hold much moisture)</li>
+                </ul>
+            </div>
+        </section>
+
+        <footer>
+            <p>EASA ATPL Meteorology | Fronts & Depressions Study Poster | Created for exam preparation</p>
+        </footer>
+    </div>
+</body>
+</html>

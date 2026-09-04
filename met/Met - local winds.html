@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Winds - ATPL Meteorology</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #1a2d4a 50%, #0d1929 100%);
+            min-height: 100vh;
+            color: #e8f0f7;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4.5rem;
+            letter-spacing: 8px;
+            background: linear-gradient(90deg, #f7d046, #e8a525, #f7d046);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 60px rgba(247, 208, 70, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #7a9cc6;
+            letter-spacing: 4px;
+            margin-top: 5px;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .hot { background: linear-gradient(135deg, #ff6b35, #ff4444); }
+        .cold { background: linear-gradient(135deg, #4ecdc4, #44a3aa); }
+        .dry { border: 2px dashed #f7d046; background: transparent; }
+        .moist { background: linear-gradient(135deg, #667eea, #764ba2); }
+
+        .world-map {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            background: radial-gradient(ellipse at center, #1e3a5f 0%, #0a1628 100%);
+            border-radius: 20px;
+            margin: 20px 0;
+            overflow: hidden;
+            border: 1px solid rgba(122, 156, 198, 0.2);
+        }
+
+        .map-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(74, 144, 226, 0.1) 0%, transparent 30%),
+                radial-gradient(circle at 80% 40%, rgba(74, 144, 226, 0.1) 0%, transparent 25%);
+        }
+
+        /* Simplified continent shapes */
+        .continent {
+            position: absolute;
+            background: rgba(122, 156, 198, 0.15);
+            border: 1px solid rgba(122, 156, 198, 0.25);
+        }
+
+        .europe {
+            width: 120px;
+            height: 80px;
+            top: 100px;
+            left: 520px;
+            border-radius: 20px 30px 15px 25px;
+        }
+
+        .africa {
+            width: 130px;
+            height: 160px;
+            top: 160px;
+            left: 500px;
+            border-radius: 30px 40px 60px 50px;
+        }
+
+        .asia {
+            width: 200px;
+            height: 140px;
+            top: 90px;
+            left: 620px;
+            border-radius: 20px 60px 40px 20px;
+        }
+
+        .south-america {
+            width: 80px;
+            height: 150px;
+            top: 220px;
+            left: 280px;
+            border-radius: 30px 40px 20px 60px;
+        }
+
+        .north-america {
+            width: 160px;
+            height: 120px;
+            top: 80px;
+            left: 150px;
+            border-radius: 40px 30px 50px 20px;
+        }
+
+        .australia {
+            width: 90px;
+            height: 70px;
+            top: 300px;
+            left: 820px;
+            border-radius: 20px 30px 25px 35px;
+        }
+
+        /* Wind markers on map */
+        .wind-marker {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .wind-marker:hover {
+            transform: scale(1.3);
+            z-index: 20;
+        }
+
+        .wind-marker.hot-wind {
+            background: linear-gradient(135deg, #ff6b35, #ff4444);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .wind-marker.cold-wind {
+            background: linear-gradient(135deg, #4ecdc4, #44a3aa);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+        }
+
+        /* Wind arrow indicators */
+        .wind-arrow {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.7;
+        }
+
+        /* Cards grid */
+        .winds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .wind-card {
+            background: linear-gradient(145deg, rgba(30, 58, 95, 0.6), rgba(15, 35, 60, 0.8));
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(122, 156, 198, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wind-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+        }
+
+        .wind-card.hot-card::before {
+            background: linear-gradient(180deg, #ff6b35, #ff4444);
+        }
+
+        .wind-card.cold-card::before {
+            background: linear-gradient(180deg, #4ecdc4, #44a3aa);
+        }
+
+        .wind-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(247, 208, 70, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .wind-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .wind-icon.hot-icon {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(255, 68, 68, 0.3));
+        }
+
+        .wind-icon.cold-icon {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(68, 163, 170, 0.3));
+        }
+
+        .wind-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+        }
+
+        .wind-name.hot-text {
+            color: #ff8c5a;
+        }
+
+        .wind-name.cold-text {
+            color: #6ee7df;
+        }
+
+        .memory-hook {
+            background: linear-gradient(90deg, rgba(247, 208, 70, 0.15), rgba(232, 165, 37, 0.05));
+            border-left: 3px solid #f7d046;
+            padding: 10px 15px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-weight: 600;
+            color: #f7d046;
+            font-size: 1.05rem;
+        }
+
+        .wind-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: 0.9rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #a8c4e0;
+        }
+
+        .detail-label {
+            color: #7a9cc6;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tag-hot { background: rgba(255, 107, 53, 0.2); color: #ff8c5a; }
+        .tag-cold { background: rgba(78, 205, 196, 0.2); color: #6ee7df; }
+        .tag-dry { background: rgba(247, 208, 70, 0.2); color: #f7d046; }
+        .tag-moist { background: rgba(102, 126, 234, 0.2); color: #8b9ff7; }
+
+        .tags-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #5a7a9c;
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(122, 156, 198, 0.15);
+        }
+
+        .quick-ref {
+            background: linear-gradient(145deg, rgba(247, 208, 70, 0.1), rgba(232, 165, 37, 0.05));
+            border: 1px solid rgba(247, 208, 70, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .quick-ref h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: #f7d046;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .quick-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
+        }
+
+        .quick-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: rgba(15, 35, 60, 0.5);
+            border-radius: 8px;
+        }
+
+        .quick-item .emoji {
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.8rem;
+                letter-spacing: 4px;
+            }
+
+            .world-map {
+                height: 300px;
+            }
+
+            .winds-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>LOCAL WINDS</h1>
+            <p class="subtitle">ATPL METEOROLOGY • MEMORY HOOKS EDITION</p>
+        </header>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-dot hot"></div>
+                <span>Hot Wind</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot cold"></div>
+                <span>Cold Wind</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot dry"></div>
+                <span>Dry</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot moist"></div>
+                <span>Moist</span>
+            </div>
+        </div>
+
+        <div class="world-map">
+            <div class="map-overlay"></div>
+            
+            <!-- Continents -->
+            <div class="continent europe"></div>
+            <div class="continent africa"></div>
+            <div class="continent asia"></div>
+            <div class="continent south-america"></div>
+            <div class="continent north-america"></div>
+            <div class="continent australia"></div>
+
+            <!-- Wind Markers -->
+            <div class="wind-marker hot-wind" style="top: 200px; left: 480px;" title="Harmattan">H</div>
+            <div class="wind-marker hot-wind" style="top: 155px; left: 555px;" title="Sirocco">S</div>
+            <div class="wind-marker hot-wind" style="top: 195px; left: 575px;" title="Ghibli">G</div>
+            <div class="wind-marker cold-wind" style="top: 130px; left: 510px;" title="Mistral">M</div>
+            <div class="wind-marker cold-wind" style="top: 140px; left: 595px;" title="Bora">B</div>
+            <div class="wind-marker cold-wind" style="top: 280px; left: 310px;" title="Pamperos">P</div>
+            <div class="wind-marker hot-wind" style="top: 115px; left: 255px;" title="Chinook">C</div>
+            <div class="wind-marker hot-wind" style="top: 120px; left: 560px;" title="Föhn">F</div>
+            <div class="wind-marker hot-wind" style="top: 180px; left: 700px;" title="Shamal">Sh</div>
+            <div class="wind-marker hot-wind" style="top: 195px; left: 620px;" title="Khamsin">K</div>
+            <div class="wind-marker hot-wind" style="top: 315px; left: 570px;" title="Berg">Bg</div>
+            <div class="wind-marker cold-wind" style="top: 165px; left: 485px;" title="Levanter">L</div>
+        </div>
+
+        <div class="winds-grid">
+            <!-- Harmattan -->
+            <div class="wind-card hot-card">
+                <div class="card-header">
+                    <div class="wind-icon hot-icon">🏜️</div>
+                    <div class="wind-name hot-text">HARMATTAN</div>
+                </div>
+                <div class="memory-hook">"Harsh African" = Dry from Sahara</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> West Africa</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> NE → SW</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Nov - Mar</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> Dust haze</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-hot">Hot</span>
+                    <span class="tag tag-dry">Dry</span>
+                </div>
+            </div>
+
+            <!-- Sirocco -->
+            <div class="wind-card hot-card">
+                <div class="card-header">
+                    <div class="wind-icon hot-icon">🌊</div>
+                    <div class="wind-name hot-text">SIROCCO</div>
+                </div>
+                <div class="memory-hook">"Sizzling Sicily" = Hot, humid to Med</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> N. Africa → Med</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> S → N</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Spring</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> Dust + humidity</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-hot">Hot</span>
+                    <span class="tag tag-moist">Humid</span>
+                </div>
+            </div>
+
+            <!-- Ghibli -->
+            <div class="wind-card hot-card">
+                <div class="card-header">
+                    <div class="wind-icon hot-icon">🔥</div>
+                    <div class="wind-name hot-text">GHIBLI</div>
+                </div>
+                <div class="memory-hook">"Great Libyan" = Hot, dry Saharan</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> Libya</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> S → N</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Spring/Autumn</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> Sandstorms</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-hot">Hot</span>
+                    <span class="tag tag-dry">Dry</span>
+                </div>
+            </div>
+
+            <!-- Khamsin -->
+            <div class="wind-card hot-card">
+                <div class="card-header">
+                    <div class="wind-icon hot-icon">⏳</div>
+                    <div class="wind-name hot-text">KHAMSIN</div>
+                </div>
+                <div class="memory-hook">"Khaki Egyptian" = 50 days of dust</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> Egypt / N. Africa</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> S → N</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Mar - May</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> Dust, temp spike</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-hot">Hot</span>
+                    <span class="tag tag-dry">Dry</span>
+                </div>
+            </div>
+
+            <!-- Shamal -->
+            <div class="wind-card hot-card">
+                <div class="card-header">
+                    <div class="wind-icon hot-icon">🛢️</div>
+                    <div class="wind-name hot-text">SHAMAL</div>
+                </div>
+                <div class="memory-hook">"Shimmering Gulf" = Hot NW over Gulf</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> Persian Gulf / Iraq</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> NW → SE</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Summer</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> Sand/dust storms</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-hot">Hot</span>
+                    <span class="tag tag-dry">Dry</span>
+                </div>
+            </div>
+
+            <!-- Mistral -->
+            <div class="wind-card cold-card">
+                <div class="card-header">
+                    <div class="wind-icon cold-icon">❄️</div>
+                    <div class="wind-name cold-text">MISTRAL</div>
+                </div>
+                <div class="memory-hook">"Misty France" = Cold down Rhône Valley</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> France → Med</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> N → S</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Winter/Spring</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> Clear skies, gusty</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-cold">Cold</span>
+                    <span class="tag tag-dry">Dry</span>
+                </div>
+            </div>
+
+            <!-- Bora -->
+            <div class="wind-card cold-card">
+                <div class="card-header">
+                    <div class="wind-icon cold-icon">💨</div>
+                    <div class="wind-name cold-text">BORA</div>
+                </div>
+                <div class="memory-hook">"Brisk Adriatic" = Cold katabatic blast</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> E. Europe → Adriatic</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> NE → SW</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Winter</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> Violent gusts 100kt+</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-cold">Cold</span>
+                    <span class="tag tag-dry">Dry</span>
+                </div>
+            </div>
+
+            <!-- Pamperos -->
+            <div class="wind-card cold-card">
+                <div class="card-header">
+                    <div class="wind-icon cold-icon">🌾</div>
+                    <div class="wind-name cold-text">PAMPEROS</div>
+                </div>
+                <div class="memory-hook">"Pampas Power" = Cold from Argentina</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> Argentina / Uruguay</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> SW → NE</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Winter</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> Temp drop, squalls</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-cold">Cold</span>
+                    <span class="tag tag-dry">Dry</span>
+                </div>
+            </div>
+
+            <!-- Chinook -->
+            <div class="wind-card hot-card">
+                <div class="card-header">
+                    <div class="wind-icon hot-icon">🏔️</div>
+                    <div class="wind-name hot-text">CHINOOK</div>
+                </div>
+                <div class="memory-hook">"Cheeky Rockies" = Warm föhn, snow eater</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> E. Rocky Mountains</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> W → E</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Winter/Spring</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> Rapid warming</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-hot">Warm</span>
+                    <span class="tag tag-dry">Dry</span>
+                </div>
+            </div>
+
+            <!-- Föhn -->
+            <div class="wind-card hot-card">
+                <div class="card-header">
+                    <div class="wind-icon hot-icon">⛰️</div>
+                    <div class="wind-name hot-text">FÖHN</div>
+                </div>
+                <div class="memory-hook">"Fiery Alps" = The OG warm descender</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> Alps (N. side)</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> S → N</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Any</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> DALR warming</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-hot">Warm</span>
+                    <span class="tag tag-dry">Dry</span>
+                </div>
+            </div>
+
+            <!-- Berg -->
+            <div class="wind-card hot-card">
+                <div class="card-header">
+                    <div class="wind-icon hot-icon">🦁</div>
+                    <div class="wind-name hot-text">BERG</div>
+                </div>
+                <div class="memory-hook">"Burning South African" = Hot offshore</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> South Africa coast</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> E → W (offshore)</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Winter</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> Hot, dusty</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-hot">Hot</span>
+                    <span class="tag tag-dry">Dry</span>
+                </div>
+            </div>
+
+            <!-- Levanter -->
+            <div class="wind-card cold-card">
+                <div class="card-header">
+                    <div class="wind-icon cold-icon">🌫️</div>
+                    <div class="wind-name cold-text">LEVANTER</div>
+                </div>
+                <div class="memory-hook">"Levant Easterly" = Moist through Gibraltar</div>
+                <div class="wind-details">
+                    <div class="detail-item"><span class="detail-label">Region:</span> Strait of Gibraltar</div>
+                    <div class="detail-item"><span class="detail-label">Direction:</span> E → W</div>
+                    <div class="detail-item"><span class="detail-label">Season:</span> Summer</div>
+                    <div class="detail-item"><span class="detail-label">Effect:</span> Fog, low cloud</div>
+                </div>
+                <div class="tags-row">
+                    <span class="tag tag-cold">Mild</span>
+                    <span class="tag tag-moist">Moist</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-ref">
+            <h3>⚡ QUICK REFERENCE - EXAM MODE</h3>
+            <div class="quick-list">
+                <div class="quick-item">
+                    <span class="emoji">🔥</span>
+                    <span><strong>Hot Saharan winds:</strong> Harmattan, Sirocco, Ghibli, Khamsin</span>
+                </div>
+                <div class="quick-item">
+                    <span class="emoji">❄️</span>
+                    <span><strong>Cold European:</strong> Mistral (France), Bora (Adriatic)</span>
+                </div>
+                <div class="quick-item">
+                    <span class="emoji">⛰️</span>
+                    <span><strong>Föhn-type:</strong> Föhn (Alps), Chinook (Rockies) - DALR descent</span>
+                </div>
+                <div class="quick-item">
+                    <span class="emoji">🌍</span>
+                    <span><strong>Southern Hemisphere:</strong> Pamperos (S. America), Berg (S. Africa)</span>
+                </div>
+                <div class="quick-item">
+                    <span class="emoji">🛢️</span>
+                    <span><strong>Middle East:</strong> Shamal (Persian Gulf) - NW direction</span>
+                </div>
+                <div class="quick-item">
+                    <span class="emoji">🌫️</span>
+                    <span><strong>Only moist:</strong> Sirocco (picks up Med moisture), Levanter</span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>ATPL Meteorology Study Aid • Memory Hooks by Abror • Good luck Captain! ✈️</p>
+        </footer>
+    </div>
+</body>
+</html>
