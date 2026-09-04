@@ -35,7 +35,6 @@
     width: 100%;
   }
 
-  /* SYSTEM HEADER */
   .system-header {
     border-bottom: 2px solid var(--border);
     padding-bottom: 20px;
@@ -61,7 +60,6 @@
 
   .system-title span { color: var(--accent-cyan); }
 
-  /* DIRECTORY GRID */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -98,17 +96,11 @@
     box-shadow: 0 6px 20px var(--glow-cyan);
   }
 
-  .folder-card:hover::before {
-    background: var(--accent-cyan);
-  }
-
+  .folder-card:hover::before { background: var(--accent-cyan); }
   .folder-card.gold:hover::before { background: var(--accent-gold); }
   .folder-card.amber:hover::before { background: var(--accent-amber); }
 
-  .folder-icon {
-    font-size: 36px;
-    margin-bottom: 12px;
-  }
+  .folder-icon { font-size: 36px; margin-bottom: 12px; }
 
   .folder-name {
     font-family: 'Orbitron', sans-serif;
@@ -126,11 +118,7 @@
     margin-bottom: 12px;
   }
 
-  .folder-desc {
-    font-size: 14px;
-    color: var(--text-dim);
-    line-height: 1.5;
-  }
+  .folder-desc { font-size: 14px; color: var(--text-dim); line-height: 1.5; }
 
   .sub-files {
     margin-top: 16px;
@@ -150,9 +138,7 @@
     transition: color 0.2s;
   }
 
-  .file-link:hover {
-    color: var(--accent-cyan);
-  }
+  .file-link:hover { color: var(--accent-cyan); }
 
   .system-footer {
     margin-top: 50px;
@@ -185,8 +171,8 @@
       <div class="folder-desc">Complete GNAV module formula collection, CRP-5 procedures, coordinate systems, and descent shortcuts.</div>
       
       <div class="sub-files">
-        <a href="./gnav/index.html" class="file-link">📄 index.html (Formula Command Centre)</a>
-        <a href="./gnav/descent.html" class="file-link">📄 descent.html (Descent Formulas)</a>
+        <a href="./gnav/GNav - all formulas.html" class="file-link">📄 All Formulas Poster</a>
+        <a href="./gnav/GNav - descent formulas.html" class="file-link">📄 Descent Formulas Poster</a>
       </div>
     </div>
 
@@ -198,8 +184,7 @@
       <div class="folder-desc">Core aerodynamics, control surfaces, pressure distribution, stall mechanics, and transonic aerodynamics.</div>
       
       <div class="sub-files">
-        <a href="./pof/index.html" class="file-link">📄 index.html (Ultimate Revision Guide)</a>
-        <a href="./pof/transonic.html" class="file-link">📄 transonic.html (Transonic Aerodynamics)</a>
+        <a href="./pof/index.html" class="file-link">📄 PoF Revision Guide</a>
       </div>
     </div>
 
