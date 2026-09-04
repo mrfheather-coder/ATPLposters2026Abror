@@ -91,6 +91,27 @@
     text-transform: uppercase;
   }
 
+  /* === RETURN TO HOMEPAGE LINK === */
+  .nav-home {
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  .nav-home a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--cyan);
+    text-decoration: none;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+  }
+
+  .nav-home a:hover {
+    color: #fff;
+    text-shadow: 0 0 8px var(--cyan);
+  }
+
   /* === SECTION TITLES === */
   .section-title {
     font-family: 'Orbitron', monospace;
@@ -426,6 +447,9 @@
   <div class="header">
     <h1>Transonic Aerodynamics</h1>
     <div class="sub">Normal Shock Wave &amp; Mach Hierarchy — PoF Cheat Poster</div>
+    <div class="nav-home">
+      <a href="index.html">← Return to Homepage</a>
+    </div>
   </div>
 
   <!-- DSSS MNEMONIC -->
