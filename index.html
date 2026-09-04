@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Root — Flight Operations & Training Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #0a0e14;
+    --bg-card: #111820;
+    --border: #1a2636;
+    --accent-cyan: #00e5ff;
+    --accent-gold: #d4a853;
+    --accent-amber: #ffab00;
+    --text-primary: #e8f0f8;
+    --text-dim: #7a8ea0;
+    --glow-cyan: rgba(0, 229, 255, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 960px;
+    width: 100%;
+  }
+
+  /* SYSTEM HEADER */
+  .system-header {
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+  }
+
+  .breadcrumbs {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent-cyan);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .system-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+  }
+
+  .system-title span { color: var(--accent-cyan); }
+
+  /* DIRECTORY GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .folder-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .folder-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--border);
+    transition: background 0.25s ease;
+  }
+
+  .folder-card:hover {
+    border-color: var(--accent-cyan);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px var(--glow-cyan);
+  }
+
+  .folder-card:hover::before {
+    background: var(--accent-cyan);
+  }
+
+  .folder-card.gold:hover::before { background: var(--accent-gold); }
+  .folder-card.amber:hover::before { background: var(--accent-amber); }
+
+  .folder-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .folder-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+
+  .folder-path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-cyan);
+    margin-bottom: 12px;
+  }
+
+  .folder-desc {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .sub-files {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .file-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-top: 6px;
+    transition: color 0.2s;
+  }
+
+  .file-link:hover {
+    color: var(--accent-cyan);
+  }
+
+  .system-footer {
+    margin-top: 50px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <header class="system-header">
+    <div class="breadcrumbs">ROOT://SYSTEM_ARCHIVE/</div>
+    <h1 class="system-title">FLIGHT OPS <span>DIRECTORY</span></h1>
+  </header>
+
+  <main class="grid">
+
+    <!-- SUBFOLDER: GENERAL NAVIGATION -->
+    <div class="folder-card gold">
+      <div class="folder-icon">📁</div>
+      <div class="folder-name">General Navigation</div>
+      <div class="folder-path">/gnav/</div>
+      <div class="folder-desc">Complete GNAV module formula collection, CRP-5 procedures, coordinate systems, and descent shortcuts.</div>
+      
+      <div class="sub-files">
+        <a href="./gnav/index.html" class="file-link">📄 index.html (Formula Command Centre)</a>
+        <a href="./gnav/descent.html" class="file-link">📄 descent.html (Descent Formulas)</a>
+      </div>
+    </div>
+
+    <!-- SUBFOLDER: PRINCIPLES OF FLIGHT -->
+    <div class="folder-card amber">
+      <div class="folder-icon">📁</div>
+      <div class="folder-name">Principles of Flight</div>
+      <div class="folder-path">/pof/</div>
+      <div class="folder-desc">Core aerodynamics, control surfaces, pressure distribution, stall mechanics, and transonic aerodynamics.</div>
+      
+      <div class="sub-files">
+        <a href="./pof/index.html" class="file-link">📄 index.html (Ultimate Revision Guide)</a>
+        <a href="./pof/transonic.html" class="file-link">📄 transonic.html (Transonic Aerodynamics)</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="system-footer">
+    GITHUB PAGES MULTIPAGE ARCHIVE · FLIGHT TRAINING MODULES
+  </footer>
+
+</div>
+
+</body>
+</html>
