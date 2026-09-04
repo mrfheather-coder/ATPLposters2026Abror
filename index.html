@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>System Root — Flight Operations & Training Archive</title>
+<title>Homepage — ATPL Revision Archive</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -13,6 +13,7 @@
     --accent-cyan: #00e5ff;
     --accent-gold: #d4a853;
     --accent-amber: #ffab00;
+    --accent-purple: #b388ff;
     --text-primary: #e8f0f8;
     --text-dim: #7a8ea0;
     --glow-cyan: rgba(0, 229, 255, 0.12);
@@ -99,6 +100,7 @@
   .folder-card:hover::before { background: var(--accent-cyan); }
   .folder-card.gold:hover::before { background: var(--accent-gold); }
   .folder-card.amber:hover::before { background: var(--accent-amber); }
+  .folder-card.purple:hover::before { background: var(--accent-purple); }
 
   .folder-icon { font-size: 36px; margin-bottom: 12px; }
 
@@ -158,7 +160,7 @@
   
   <header class="system-header">
     <div class="breadcrumbs">ROOT://SYSTEM_ARCHIVE/</div>
-    <h1 class="system-title">FLIGHT OPS <span>DIRECTORY</span></h1>
+    <h1 class="system-title">ATPL <span>HOMEPAGE</span></h1>
   </header>
 
   <main class="grid">
@@ -186,6 +188,19 @@
       <div class="sub-files">
         <a href="./pof/PoF%20-%20ultimate%20guide.html" class="file-link">📄 Ultimate Revision Guide</a>
         <a href="./pof/PoF%20-%20transonic%20flight.html" class="file-link">📄 Transonic Flight Poster</a>
+      </div>
+    </div>
+
+    <!-- SUBFOLDER: RADIO NAVIGATION -->
+    <div class="folder-card purple">
+      <div class="folder-icon">📁</div>
+      <div class="folder-name">Radio Navigation</div>
+      <div class="folder-path">/radnav/</div>
+      <div class="folder-desc">Radio wave propagation, ground/airborne equipment, navigation systems, and radar principles.</div>
+      
+      <div class="sub-files">
+        <!-- Replace file names below with your actual Radio Nav file names -->
+        <a href="./radnav/RadNav%20-%20poster1.html" class="file-link">📄 Radio Nav Poster 1</a>
       </div>
     </div>
 
