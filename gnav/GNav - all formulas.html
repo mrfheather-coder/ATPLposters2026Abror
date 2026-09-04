@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GNAV — Formula Command Centre</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-card: #12121a;
+    --bg-card-alt: #181825;
+    --accent-gold: #d4a853;
+    --accent-blue: #4a9eff;
+    --accent-cyan: #00e5c7;
+    --accent-red: #ff4757;
+    --accent-purple: #a78bfa;
+    --accent-orange: #ff8c42;
+    --text-primary: #e8e6e3;
+    --text-secondary: #8a8a9a;
+    --text-dim: #55556a;
+    --border: #2a2a3a;
+    --glow-gold: rgba(212, 168, 83, 0.15);
+    --glow-blue: rgba(74, 158, 255, 0.12);
+    --glow-cyan: rgba(0, 229, 199, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* === HERO HEADER === */
+  .hero {
+    position: relative;
+    padding: 50px 40px 30px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--glow-gold), transparent 70%);
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 8px;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 8vw, 90px);
+    letter-spacing: 4px;
+    line-height: 0.9;
+    color: var(--text-primary);
+  }
+
+  .hero-title span {
+    color: var(--accent-gold);
+  }
+
+  .hero-sub {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    max-width: 500px;
+  }
+
+  .hero-badge {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    width: 80px;
+    height: 80px;
+    border: 2px solid var(--accent-gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .hero-badge .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--accent-gold);
+    line-height: 1;
+  }
+
+  .hero-badge .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 2px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+
+  /* === TAB NAVIGATION === */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab-bar::-webkit-scrollbar { display: none; }
+
+  .tab {
+    padding: 16px 28px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .tab:hover { color: var(--text-secondary); }
+
+  .tab.active {
+    color: var(--accent-gold);
+    border-bottom-color: var(--accent-gold);
+  }
+
+  .tab .tab-num {
+    font-size: 8px;
+    vertical-align: super;
+    margin-right: 4px;
+    opacity: 0.5;
+  }
+
+  /* === PAGE CONTAINERS === */
+  .page {
+    display: none;
+    padding: 30px 40px 60px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .page.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === SECTION HEADERS === */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 35px 0 20px;
+  }
+
+  .section-head:first-child { margin-top: 10px; }
+
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--accent-gold);
+    opacity: 0.3;
+    line-height: 1;
+  }
+
+  .section-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* === FORMULA CARDS === */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .card:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-2px);
+  }
+
+  .card.accent-blue { border-left: 3px solid var(--accent-blue); }
+  .card.accent-cyan { border-left: 3px solid var(--accent-cyan); }
+  .card.accent-gold { border-left: 3px solid var(--accent-gold); }
+  .card.accent-red { border-left: 3px solid var(--accent-red); }
+  .card.accent-purple { border-left: 3px solid var(--accent-purple); }
+  .card.accent-orange { border-left: 3px solid var(--accent-orange); }
+
+  .card-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 14px;
+    color: var(--text-primary);
+  }
+
+  .formula-box {
+    background: rgba(212, 168, 83, 0.06);
+    border: 1px solid rgba(212, 168, 83, 0.15);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 10px 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent-gold);
+    line-height: 1.7;
+  }
+
+  .formula-box.blue {
+    background: rgba(74, 158, 255, 0.06);
+    border-color: rgba(74, 158, 255, 0.15);
+    color: var(--accent-blue);
+  }
+
+  .formula-box.cyan {
+    background: rgba(0, 229, 199, 0.06);
+    border-color: rgba(0, 229, 199, 0.15);
+    color: var(--accent-cyan);
+  }
+
+  .formula-box.red {
+    background: rgba(255, 71, 87, 0.06);
+    border-color: rgba(255, 71, 87, 0.15);
+    color: var(--accent-red);
+  }
+
+  .formula-box.purple {
+    background: rgba(167, 139, 250, 0.06);
+    border-color: rgba(167, 139, 250, 0.15);
+    color: var(--accent-purple);
+  }
+
+  .formula-box.orange {
+    background: rgba(255, 140, 66, 0.06);
+    border-color: rgba(255, 140, 66, 0.15);
+    color: var(--accent-orange);
+  }
+
+  .card-note {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: 10px;
+  }
+
+  .card-note strong {
+    color: var(--accent-gold);
+  }
+
+  .card-note em {
+    color: var(--accent-cyan);
+    font-style: normal;
+  }
+
+  /* === COMPARISON TABLES === */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  .comp-table th {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(42, 42, 58, 0.5);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+
+  .comp-table tr:last-child td { border-bottom: none; }
+
+  .comp-table td:first-child {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* === SIDE BY SIDE === */
+  .side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .side-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .side-card .side-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .side-card.gold .side-label { color: var(--accent-gold); }
+  .side-card.blue .side-label { color: var(--accent-blue); }
+
+  /* === HIGHLIGHT STRIP === */
+  .strip {
+    background: linear-gradient(135deg, rgba(212, 168, 83, 0.08), rgba(74, 158, 255, 0.05));
+    border: 1px solid rgba(212, 168, 83, 0.2);
+    border-radius: 10px;
+    padding: 18px 24px;
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .strip-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .strip-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .strip-text strong {
+    color: var(--accent-gold);
+  }
+
+  /* === VECTOR DIAGRAM === */
+  .vector-legend {
+    display: flex;
+    gap: 30px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+  }
+
+  .vector-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .vector-arrows {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    min-width: 40px;
+  }
+
+  .v-gold { color: var(--accent-gold); }
+  .v-cyan { color: var(--accent-cyan); }
+  .v-red { color: var(--accent-red); }
+
+  .vector-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  /* === FULLWIDTH CARD === */
+  .card-full {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 12px;
+  }
+
+  /* === EXAM TIP === */
+  .exam-tip {
+    background: rgba(255, 71, 87, 0.05);
+    border: 1px solid rgba(255, 71, 87, 0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .exam-tip::before {
+    content: '⚠ EXAM TRAP';
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--accent-red);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* === FOOTER === */
+  .footer {
+    text-align: center;
+    padding: 30px;
+    border-top: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .hero { padding: 30px 20px 20px; }
+    .hero-badge { display: none; }
+    .page { padding: 20px; }
+    .tab { padding: 12px 16px; font-size: 10px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .side-by-side { grid-template-columns: 1fr; }
+    .section-num { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-label">EASA ATPL · General Navigation</div>
+  <div class="hero-title">FORMULA <span>COMMAND</span><br>CENTRE</div>
+  <div class="hero-sub">Every formula, rule, and conversion you need — organised for rapid exam recall.</div>
+  <div class="hero-badge">
+    <div class="num">R3</div>
+    <div class="label">Final</div>
+  </div>
+</div>
+
+<!-- ===== TABS ===== -->
+<div class="tab-bar">
+  <div class="tab active" onclick="showPage('earth')"><span class="tab-num">01</span>EARTH & COORDS</div>
+  <div class="tab" onclick="showPage('distance')"><span class="tab-num">02</span>DISTANCE</div>
+  <div class="tab" onclick="showPage('gradients')"><span class="tab-num">03</span>GRADIENTS</div>
+  <div class="tab" onclick="showPage('crp5')"><span class="tab-num">04</span>CRP-5</div>
+  <div class="tab" onclick="showPage('wind')"><span class="tab-num">05</span>WIND & VECTORS</div>
+  <div class="tab" onclick="showPage('charts')"><span class="tab-num">06</span>CHARTS & TIME</div>
+</div>
+
+<!-- ===== PAGE 1: EARTH & COORDINATES ===== -->
+<div class="page active" id="page-earth">
+
+  <div class="section-head">
+    <div class="section-num">01</div>
+    <div class="section-title">Earth Model</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card accent-gold">
+      <div class="card-tag">Shape</div>
+      <div class="card-title">Oblate Spheroid</div>
+      <div class="card-note">Earth is <strong>squashed at the poles, bulging at the equator</strong>. The WGS-84 ellipsoid models this shape. Compression ratio ≈ 1/298.257</div>
+    </div>
+
+    <div class="card accent-blue">
+      <div class="card-tag">Key Values</div>
+      <div class="card-title">Nautical Mile Lengths</div>
+      <div class="comp-table">
+        <table style="width:100%">
+          <tr><th>Location</th><th>1' of Lat</th><th>Metres</th></tr>
+          <tr><td>North Pole (90°)</td><td>60.31 NM</td><td>1,862 m</td></tr>
+          <tr><td>Mid-lat (45°)</td><td>60.01 NM</td><td>1,852 m</td></tr>
+          <tr><td>Equator (0°)</td><td>59.71 NM</td><td>1,844 m</td></tr>
+        </table>
+      </div>
+      <div class="card-note"><strong>Poles = longest NM</strong> (flatter surface, gentler curvature, bigger radius of curvature → longer arc per 1'). <strong>Equator = shortest</strong>. Average = <em>1,852 m at ~45°</em>.</div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">02</div>
+    <div class="section-title">Geodetic vs Geocentric Latitude</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="side-by-side">
+    <div class="side-card gold">
+      <div class="side-label">GEODETIC</div>
+      <div class="card-note" style="text-align:left">Angle between the <strong>normal to the ellipsoid surface</strong> and the equatorial plane. This is what charts and GPS use. Always the <strong>larger value</strong> (except at equator & poles where they're equal).</div>
+    </div>
+    <div class="side-card blue">
+      <div class="side-label">GEOCENTRIC</div>
+      <div class="card-note" style="text-align:left">Angle between the <strong>line to the Earth's centre</strong> and the equatorial plane. Always the <strong>smaller value</strong>. Max difference from geodetic occurs at <em>~45° latitude</em>.</div>
+    </div>
+  </div>
+
+  <div class="exam-tip">
+    Geodetic = always ≥ geocentric. They're <strong>equal at the equator and poles only</strong>. For longitude, geodetic and geocentric give the <strong>same value</strong> (both measured in the equatorial plane).
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">03</div>
+    <div class="section-title">Meridian Convergence</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-full">
+    <div class="formula-box">
+      Convergence = Δ Longitude × sin(Latitude)
+    </div>
+    <div class="card-note">Meridians converge toward the poles. At the <strong>equator</strong>, convergence = 0° (meridians are parallel). At the <strong>poles</strong>, convergence = Δlong itself. This matters for great circle track direction changes between two points.</div>
+    <div class="exam-tip">
+      For a great circle track, the <strong>initial track</strong> and <strong>final track</strong> differ by the convergence angle. The track at the midpoint = the mean of initial and final tracks.
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== PAGE 2: DISTANCE FORMULAS ===== -->
+<div class="page" id="page-distance">
+
+  <div class="section-head">
+    <div class="section-num">01</div>
+    <div class="section-title">Great Circle Distance</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-full">
+    <div class="card-tag">Cosine Rule for Spherical Triangles</div>
+    <div class="card-title">The Big Formula</div>
+    <div class="formula-box">
+      cos(d) = sin(lat₁) × sin(lat₂) + cos(lat₁) × cos(lat₂) × cos(Δlong)
+    </div>
+    <div class="formula-box blue">
+      Distance (NM) = d × 60
+    </div>
+    <div class="card-note">Take <strong>arccos</strong> of the result to get d in degrees, then multiply by 60 (1° of great circle = 60 NM). Watch the signs: <strong>opposite hemispheres → one latitude is negative</strong>.</div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">02</div>
+    <div class="section-title">Departure (East-West Distance)</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card accent-cyan">
+      <div class="card-tag">Finding Distance</div>
+      <div class="card-title">Departure Formula</div>
+      <div class="formula-box cyan">
+        Departure (NM) = Δ Long (') × cos(lat)
+      </div>
+      <div class="card-note">Distance along a <strong>parallel of latitude</strong> (east-west). The cos(lat) factor accounts for <strong>meridians converging toward the poles</strong>.</div>
+    </div>
+
+    <div class="card accent-gold">
+      <div class="card-tag">Finding Longitude Change</div>
+      <div class="card-title">Rearranged</div>
+      <div class="formula-box">
+        Δ Long (') = Departure (NM) / cos(lat)
+      </div>
+      <div class="card-note">Use this when you know the distance flown east/west and need to find the new longitude. Don't forget to <strong>convert minutes back to degrees</strong> (÷ 60).</div>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div class="strip-icon">🌍</div>
+    <div class="strip-text"><strong>Quick check:</strong> At equator (cos 0° = 1), 1° long = 60 NM. At 60°N (cos 60° = 0.5), 1° long = 30 NM. At 87°N (cos 87° = 0.052), 1° long ≈ 3.14 NM.</div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">03</div>
+    <div class="section-title">Parallel Circumference</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-full">
+    <div class="card-tag">Two Aircraft Meeting Problem</div>
+    <div class="card-title">Full Circle at a Given Latitude</div>
+    <div class="formula-box purple">
+      Circumference (NM) = 360 × 60 × cos(lat) = 21,600 × cos(lat)
+    </div>
+    <div class="card-note">For "two aircraft flying opposite directions along a parallel" questions: calculate circumference, <strong>add both speeds</strong>, then Time = Distance ÷ Combined Speed.</div>
+    <div class="exam-tip">Don't confuse the 360 (degrees) with minutes. The full formula is 360° × 60'/° = 21,600' first, THEN × cos(lat).</div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">04</div>
+    <div class="section-title">Along a Meridian (North-South)</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-full">
+    <div class="formula-box orange">
+      Distance (NM) = Δ Latitude in minutes
+    </div>
+    <div class="card-note">Flying due north or south along a meridian: <strong>1' of latitude = 1 NM</strong>. No cosine correction needed — meridians are all great circles of equal length. Just convert the latitude change to minutes.</div>
+  </div>
+
+</div>
+
+<!-- ===== PAGE 3: GRADIENTS ===== -->
+<div class="page" id="page-gradients">
+
+  <div class="section-head">
+    <div class="section-num">01</div>
+    <div class="section-title">The 1-in-60 Rule</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-full">
+    <div class="card-tag">Master Formula</div>
+    <div class="card-title">1 NM at 60 NM = 1°</div>
+    <div class="formula-box">
+      Height (ft) = Angle (°) × Distance (ft) / 60
+    </div>
+    <div class="formula-box blue">
+      Distance (ft) = Height (ft) × 60 / Angle (°)
+    </div>
+    <div class="card-note">Works for any small angle (below ~15°). This is the foundation for lateral track error, descent planning, and gradient calculations. The number <strong>60 is always the constant</strong>.</div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">02</div>
+    <div class="section-title">Gradient — Two Ways</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="side-by-side">
+    <div class="side-card gold">
+      <div class="side-label">DEGREES</div>
+      <div class="formula-box" style="text-align:left">
+        Gradient (°) = (Δ Height / 100) ÷ Distance (NM)
+      </div>
+      <div class="card-note" style="text-align:left; margin-top:12px;">
+        Divide height in feet by 100, then divide by NM.<br><br>
+        <strong>Example:</strong> 27,500 ft over 75 NM<br>
+        = (27,500 / 100) / 75 = <em>3.7°</em>
+      </div>
+    </div>
+    <div class="side-card blue">
+      <div class="side-label">PERCENTAGE</div>
+      <div class="formula-box blue" style="text-align:left">
+        Gradient (%) = (Δ Height / Distance in ft) × 100
+      </div>
+      <div class="card-note" style="text-align:left; margin-top:12px;">
+        Both values must be in feet. Then × 100.<br><br>
+        <strong>Example:</strong> 27,500 ft over 75 NM<br>
+        = (27,500 / 455,700) × 100 = <em>6.03%</em>
+      </div>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div class="strip-icon">🎯</div>
+    <div class="strip-text"><strong>Sanity check:</strong> Degrees is always a <strong>smaller number</strong> than percentage. A 3° ILS glideslope ≈ 5% gradient. If your answer comes out backwards, you used the wrong formula.</div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">03</div>
+    <div class="section-title">Descent Planning</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card accent-purple">
+      <div class="card-tag">Top of Descent</div>
+      <div class="card-title">Distance to Start Descent</div>
+      <div class="formula-box purple">
+        Distance (ft) = (Δ Height × 60) / Glidepath angle (°)
+      </div>
+      <div class="card-note">Convert result from feet to NM (÷ 6,076).<br><strong>Example:</strong> 3,500 ft to lose at 3° = (3500 × 60) / 3 = 70,000 ft = <em>~11.5 NM</em></div>
+    </div>
+
+    <div class="card accent-orange">
+      <div class="card-tag">Time in Descent</div>
+      <div class="card-title">Duration</div>
+      <div class="formula-box orange">
+        Time = Δ Height / Rate of Descent
+      </div>
+      <div class="card-note"><strong>Example:</strong> 3,500 ft at 750 ft/min = 4.67 min = <em>4 min 40 sec</em></div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">04</div>
+    <div class="section-title">Height at a Given Distance</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card accent-gold">
+      <div class="card-tag">Method 1 — 1-in-60</div>
+      <div class="card-title">Approximate</div>
+      <div class="formula-box">
+        Height = Distance (ft) × Angle / 60
+      </div>
+      <div class="card-note"><strong>Example:</strong> 24,320 ft from threshold at 3°<br>= 24,320 × 3 / 60 = <em>1,216 ft AGL</em></div>
+    </div>
+
+    <div class="card accent-blue">
+      <div class="card-tag">Method 2 — Trigonometry</div>
+      <div class="card-title">Exact</div>
+      <div class="formula-box blue">
+        Height = tan(angle) × Distance (ft)
+      </div>
+      <div class="card-note"><strong>Example:</strong> tan(3°) × 24,320<br>= 0.0524 × 24,320 = <em>1,274 ft AGL</em></div>
+    </div>
+  </div>
+
+  <div class="exam-tip">
+    The two methods give <strong>slightly different answers</strong> (1,216 vs 1,274 ft). Use whichever the question specifies. Also watch for the <strong>altitude vs height trap</strong> — if they ask for altitude, <strong>add airport elevation</strong>!
+  </div>
+
+</div>
+
+<!-- ===== PAGE 4: CRP-5 ===== -->
+<div class="page" id="page-crp5">
+
+  <div class="section-head">
+    <div class="section-num">01</div>
+    <div class="section-title">CAS → TAS Conversion</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-full">
+    <div class="card-tag">Step-by-Step Procedure</div>
+    <div class="card-title">Airspeed Window Method</div>
+
+    <div class="comp-table">
+      <table style="width:100%">
+        <tr><th>Step</th><th>Action</th><th>Window</th></tr>
+        <tr><td>1</td><td>Set <strong>pressure altitude</strong> against <strong>OAT</strong></td><td>AIR SPEED</td></tr>
+        <tr><td>2</td><td>Find CAS on inner → read raw TAS on outer</td><td>AIR SPEED</td></tr>
+        <tr><td>3</td><td>Calculate comp correction: <strong>TAS/100 − 3</strong></td><td>COMP. CORR.</td></tr>
+        <tr><td>4</td><td>Move inner disc LEFT by that many divisions</td><td>COMP. CORR.</td></tr>
+        <tr><td>5</td><td>Re-read CAS on inner → corrected TAS on outer</td><td>AIR SPEED</td></tr>
+      </table>
+    </div>
+
+    <div class="card-note" style="margin-top:16px"><strong>Example:</strong> FL410, OAT −42°C, CAS 220 kt → Raw TAS 460 kt → Comp corr = 460/100 − 3 = <em>1.6 divisions left</em> → Corrected TAS = <em>443 kt</em></div>
+
+    <div class="exam-tip">
+      <strong>NEVER</strong> use the compressibility factor given in the question text. Always use the CRP-5's built-in COMP. CORR. window — they give you a value to trick you.
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">02</div>
+    <div class="section-title">TAS → Mach Conversion</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-full">
+    <div class="comp-table">
+      <table style="width:100%">
+        <tr><th>Step</th><th>Action</th></tr>
+        <tr><td>1</td><td>Rotate inner disc so <strong>Mach index arrow</strong> appears in AIRSPEED window</td></tr>
+        <tr><td>2</td><td>Set Mach index against <strong>OAT</strong></td></tr>
+        <tr><td>3</td><td>Find TAS on outer scale → read <strong>Mach number</strong> on inner scale</td></tr>
+      </table>
+    </div>
+    <div class="card-note" style="margin-top:12px"><strong>Example:</strong> TAS 443 kt, OAT −42°C → Mach <em>0.75</em> (shown as "7.5" on the scale)</div>
+
+    <div class="strip" style="margin-top:16px">
+      <div class="strip-icon">💡</div>
+      <div class="strip-text">Compressibility correction only matters at <strong>high TAS (above ~300 kt)</strong>. It always <strong>reduces</strong> TAS — the uncorrected value overshoots because air compresses at high speed.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== PAGE 5: WIND & VECTORS ===== -->
+<div class="page" id="page-wind">
+
+  <div class="section-head">
+    <div class="section-num">01</div>
+    <div class="section-title">Wind Triangle Convention</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-full">
+    <div class="card-title">Vector Arrow Convention</div>
+    <div class="vector-legend">
+      <div class="vector-item">
+        <div class="vector-arrows v-gold">→</div>
+        <div class="vector-desc"><strong style="color:var(--accent-gold)">1 arrow</strong> — Heading / TAS (air vector)</div>
+      </div>
+      <div class="vector-item">
+        <div class="vector-arrows v-cyan">→→</div>
+        <div class="vector-desc"><strong style="color:var(--accent-cyan)">2 arrows</strong> — Track / Groundspeed (ground vector)</div>
+      </div>
+      <div class="vector-item">
+        <div class="vector-arrows v-red">→→→</div>
+        <div class="vector-desc"><strong style="color:var(--accent-red)">3 arrows</strong> — Wind direction / Wind speed (wind vector)</div>
+      </div>
+    </div>
+
+    <div class="card-note">
+      <strong>Vector addition (tip-to-tail):</strong> Place the tail of the second vector at the tip of the first. The resultant goes from the tail of the first to the tip of the second.<br><br>
+      <strong>Wind triangle:</strong> Heading vector + Wind vector = Track vector. The wind "pushes" you from heading to track.
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">02</div>
+    <div class="section-title">Key Relationships</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card accent-gold">
+      <div class="card-tag">Drift</div>
+      <div class="card-title">Track vs Heading</div>
+      <div class="formula-box">
+        Track = Heading ± Drift
+      </div>
+      <div class="card-note"><strong>Wind from the left → drift right → Track > Heading</strong> (add drift). Wind from right → drift left → Track < Heading (subtract).<br><br>Memory: <em>"Wind pushes your track downwind"</em></div>
+    </div>
+
+    <div class="card accent-cyan">
+      <div class="card-tag">Groundspeed</div>
+      <div class="card-title">TAS vs GS</div>
+      <div class="formula-box cyan">
+        GS = TAS ± Wind Component
+      </div>
+      <div class="card-note"><strong>Headwind → GS &lt; TAS</strong> (subtract).<br><strong>Tailwind → GS &gt; TAS</strong> (add).<br><br>GS is what you actually cover over the ground per hour.</div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">03</div>
+    <div class="section-title">CDMVT — The Compass Chain</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-full">
+    <div class="formula-box">
+      Compass ± Deviation → Magnetic ± Variation → True
+    </div>
+    <div class="card-note" style="margin-top:12px">
+      <strong>East is least (subtract from True to get Magnetic), West is best (add).</strong><br><br>
+      Or going the other direction (C → T): <strong>East = ADD, West = SUBTRACT</strong>.<br><br>
+      For <strong>VOR</strong> → use variation at the <em>station</em>.<br>
+      For <strong>NDB</strong> → use variation at the <em>aircraft</em>.
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== PAGE 6: CHARTS & TIME ===== -->
+<div class="page" id="page-charts">
+
+  <div class="section-head">
+    <div class="section-num">01</div>
+    <div class="section-title">Chart Projections</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card accent-gold">
+      <div class="card-tag">Mercator</div>
+      <div class="card-title">Normal Mercator</div>
+      <div class="card-note">
+        Rhumb lines = <strong>straight lines</strong><br>
+        Great circles = <strong>curved toward the equator</strong><br>
+        Scale <strong>expands</strong> with latitude (cos factor)<br>
+        Correct at equator or standard parallel<br>
+        Used for: <em>equatorial charts, plotting charts</em>
+      </div>
+    </div>
+
+    <div class="card accent-blue">
+      <div class="card-tag">Lambert</div>
+      <div class="card-title">Lambert Conformal Conic</div>
+      <div class="card-note">
+        Great circles ≈ <strong>straight lines</strong> (nearly)<br>
+        Rhumb lines = <strong>curved toward the equator</strong><br>
+        Scale correct at <strong>2 standard parallels</strong><br>
+        Convergence = Δlong × sin(parallel of origin) = <strong>constant of the cone (n)</strong><br>
+        Used for: <em>en-route charts, Jeppesen airways</em>
+      </div>
+    </div>
+
+    <div class="card accent-cyan">
+      <div class="card-tag">Polar Stereo</div>
+      <div class="card-title">Polar Stereographic</div>
+      <div class="card-note">
+        Great circles ≈ <strong>straight lines</strong><br>
+        Meridians = <strong>straight lines radiating from pole</strong><br>
+        Convergence = <strong>Δ longitude itself</strong><br>
+        Used for: <em>polar routes, above ~80° latitude</em>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">02</div>
+    <div class="section-title">Scale</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-full">
+    <div class="formula-box">
+      Scale = Chart Distance / Earth Distance
+    </div>
+    <div class="card-note">
+      Example: 1:500,000 means 1 cm on chart = 500,000 cm (5 km) on Earth.<br><br>
+      <strong>Mercator scale at a given latitude:</strong>
+    </div>
+    <div class="formula-box blue" style="margin-top:8px">
+      Scale at lat = Scale at equator × (1 / cos lat)
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-num">03</div>
+    <div class="section-title">Time & Arc Conversion</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card accent-orange">
+      <div class="card-tag">Arc to Time</div>
+      <div class="card-title">Longitude → Time</div>
+      <div class="formula-box orange">
+        360° = 24 hours<br>
+        15° = 1 hour<br>
+        1° = 4 minutes<br>
+        1' = 4 seconds
+      </div>
+      <div class="card-note"><strong>East = ahead in time, West = behind</strong><br><br>LMT = UTC + (longitude / 15) for East<br>LMT = UTC − (longitude / 15) for West</div>
+    </div>
+
+    <div class="card accent-purple">
+      <div class="card-tag">Sunrise/Sunset</div>
+      <div class="card-title">Time Calculations</div>
+      <div class="card-note">
+        Sunrise/sunset times in the Air Almanac are given for <strong>specific latitudes in UTC at the Greenwich meridian</strong>.<br><br>
+        To find sunrise/sunset at your longitude: take the tabulated time and <strong>add/subtract the arc-to-time conversion</strong> of your longitude.<br><br>
+        <strong>East → sunrise earlier (subtract)</strong><br>
+        <strong>West → sunrise later (add)</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div class="strip-icon">⏰</div>
+    <div class="strip-text"><strong>Quick mental math:</strong> 90°E = 6 hours ahead of UTC. 45°W = 3 hours behind UTC. Just divide longitude by 15.</div>
+  </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+  EASA ATPL · General Navigation · Formula Command Centre · Round 3 Final · Built with Claude
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.target.closest('.tab').classList.add('active');
+}
+</script>
+
+</body>
+</html>
