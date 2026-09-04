@@ -14,6 +14,8 @@
     --accent-gold: #d4a853;
     --accent-amber: #ffab00;
     --accent-purple: #b388ff;
+    --accent-green: #00e676;
+    --accent-red: #ff1744;
     --text-primary: #e8f0f8;
     --text-dim: #7a8ea0;
     --glow-cyan: rgba(0, 229, 255, 0.12);
@@ -101,6 +103,8 @@
   .folder-card.gold:hover::before { background: var(--accent-gold); }
   .folder-card.amber:hover::before { background: var(--accent-amber); }
   .folder-card.purple:hover::before { background: var(--accent-purple); }
+  .folder-card.green:hover::before { background: var(--accent-green); }
+  .folder-card.red:hover::before { background: var(--accent-red); }
 
   .folder-icon { font-size: 36px; margin-bottom: 12px; }
 
@@ -165,6 +169,19 @@
 
   <main class="grid">
 
+    <!-- SUBFOLDER: FLIGHT PLANNING (FPL) -->
+    <div class="folder-card green">
+      <div class="folder-icon">📁</div>
+      <div class="folder-name">Flight Planning</div>
+      <div class="folder-path">/fpl/</div>
+      <div class="folder-desc">ATS routes, flight preparation, fuel management, and ICAO flight plan procedures.</div>
+      
+      <div class="sub-files">
+        <a href="./fpl/FPL%20-%20ATS%20routes.html" class="file-link">📄 ATS Routes</a>
+        <a href="./fpl/FPL%20-%20ICAO%20flight%20plan.html" class="file-link">📄 ICAO Flight Plan</a>
+      </div>
+    </div>
+
     <!-- SUBFOLDER: GENERAL NAVIGATION -->
     <div class="folder-card gold">
       <div class="folder-icon">📁</div>
@@ -175,6 +192,61 @@
       <div class="sub-files">
         <a href="./gnav/GNav%20-%20all%20formulas.html" class="file-link">📄 All Formulas Poster</a>
         <a href="./gnav/GNav%20-%20descent%20formulas.html" class="file-link">📄 Descent Formulas Poster</a>
+      </div>
+    </div>
+
+    <!-- SUBFOLDER: HUMAN PERFORMANCE & LIMITATIONS (HPL) -->
+    <div class="folder-card red">
+      <div class="folder-icon">📁</div>
+      <div class="folder-name">Human Performance</div>
+      <div class="folder-path">/hpl/</div>
+      <div class="folder-desc">Aviation physiology, human factors, CRM principles, decision making, and psychology.</div>
+      
+      <div class="sub-files">
+        <a href="./hpl/HPL%20Human%20Performance.html" class="file-link">📄 Human Performance</a>
+        <a href="./hpl/HPL%20Psychology.html" class="file-link">📄 HPL Psychology</a>
+      </div>
+    </div>
+
+    <!-- SUBFOLDER: MASS & BALANCE (M&B) -->
+    <div class="folder-card gold">
+      <div class="folder-icon">📁</div>
+      <div class="folder-name">Mass &amp; Balance</div>
+      <div class="folder-path">/m&amp;b/</div>
+      <div class="folder-desc">Aircraft mass definitions, CG limits, load sheets, cargo distribution, and shifting calculations.</div>
+      
+      <div class="sub-files">
+        <a href="./m%26b/Mass%20and%20Balance.html" class="file-link">📄 Mass and Balance</a>
+      </div>
+    </div>
+
+    <!-- SUBFOLDER: METEOROLOGY (MET) -->
+    <div class="folder-card cyan">
+      <div class="folder-icon">📁</div>
+      <div class="folder-name">Meteorology</div>
+      <div class="folder-path">/met/</div>
+      <div class="folder-desc">Atmospheric structure, cloud types, pressure systems, frontogenesis, local winds, and severe weather hazards.</div>
+      
+      <div class="sub-files">
+        <a href="./met/Met%20-%20CB%20thunderstorm%20hazards.html" class="file-link">📄 CB Thunderstorm Hazards</a>
+        <a href="./met/Met%20-%20Clouds.html" class="file-link">📄 Clouds Guide</a>
+        <a href="./met/Met%20-%20Information.html" class="file-link">📄 Met Information</a>
+        <a href="./met/Met%20-%20flight%20hazards.html" class="file-link">📄 Flight Hazards</a>
+        <a href="./met/Met%20-%20fronts%20depressions.html" class="file-link">📄 Fronts &amp; Depressions</a>
+        <a href="./met/Met%20-%20local%20winds.html" class="file-link">📄 Local Winds</a>
+      </div>
+    </div>
+
+    <!-- SUBFOLDER: PERFORMANCE (PERF) -->
+    <div class="folder-card amber">
+      <div class="folder-icon">📁</div>
+      <div class="folder-name">Performance</div>
+      <div class="folder-path">/perf/</div>
+      <div class="folder-desc">Class A and Class B takeoff, climb, cruise, and landing performance criteria and limitations.</div>
+      
+      <div class="sub-files">
+        <a href="./perf/Performance%20-%20Class%20A.html" class="file-link">📄 Performance - Class A</a>
+        <a href="./perf/Performance%20-%20Class%20B.html" class="file-link">📄 Performance - Class B</a>
       </div>
     </div>
 
